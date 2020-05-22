@@ -1,17 +1,25 @@
+var MRoomJobs = require("roomJobs");
+
 const roomUtil = {
     initMemory: function(room){
         if(!room.memory.inited){
             room.memory.lastLevel = 0;
-            room.memory.repeatingCommandQueue = [];
-            room.memory.commandQueue = [];
-            room.memory.priorityCommandQueue = [];
-            room.memory.currentCommand = null;
+            room.memory.jobQueue = [];
+            room.memory.currentJob = null;
+            room.memory.nextQueuePriority = false;
             room.memory.timerState = 0;
             room.memory.sources = {};
             for(let source of room.find(FIND_SOURCES)){
-                //Container, link, road, assigned creeps
-                room.memory.sources[source.id] = [null, null, null, []] 
+                //Dump container id, link id, road exists, number of dedicated creeps, assigned creeps
+                room.memory.sources[source.id] = {dump:null, link:null, road:false, dedicated: 0, creeps:[]} 
             }
+            room.memory.taskAssigns = {
+                REPAIR: {max: 1, assigned: []},
+                UPGRADE: {max: 1, assigned: []},
+                HARVEST: {max: 1, assigned: []},
+                TRANSPORT: {max: 1, assigned: []},
+                BUILD: {max: 1, assigned: []}
+            };
             room.memory.inited = true;
         }
     },
@@ -47,7 +55,7 @@ const roomUtil = {
     },
     //If free creep return it, if not and a such creep is spawning return true, else return false
     findFreeCreep: function(room, genericType){
-        let creeps = room.find(FIND_MY_CREEPS, {filter: (creep) => creep.memory.genericType == genericType && creep.memory.currentCommand == null});
+        let creeps = room.find(FIND_MY_CREEPS, {filter: (creep) => MCreepUtil.bodyTypes[creep.memory.bodyType].generic == genericType && creep.memory.currentCommand == null});
         let spawns = room.find(FIND_MY_SPAWNS, {filter: (spawn) => spawn.spawning != null && spawn.spawning.name.includes(genericType)});
         if(creeps.length > 0){
             return creeps[0];
@@ -56,6 +64,56 @@ const roomUtil = {
         }else{
             return false;
         }
+    },
+    //Add a new job to the rooms's job queue / run job
+    queueJob: function(room, job, jobArgs=[], priority=false, repeat=false){
+        if(!room.memory.inited) this.initMemory(room);
+        room.memory.jobQueue.push({'job': job, 'jobArgs': jobArgs, 'priority': priority, 'repeat': repeat});
+        if(room.memory.currentJob == null) this.nextJob(room);
+    },
+    //Clear all of the room's jobs
+    clearQueue: function(room){
+        if(!room.memory.inited) this.initMemory(room);
+        room.memory.jobQueue = [];
+        room.memory.currentJob = null;
+    },
+    //Start the next job on the job queue, currentJob is null if there is nothing to do
+    nextJob: function(room){
+        if(!room.memory.inited) this.initMemory(room);
+        if(room.memory.jobQueue.length > 0){
+            for(let i in room.memory.jobQueue){
+                if(room.memory.jobQueue[i].priority == room.memory.nextQueuePriority){
+                    room.memory.currentJob = room.memory.jobQueue[i];
+                    room.memory.nextQueuePriority = !room.memory.nextQueuePriority;
+                    return;
+                }
+            }
+            room.memory.currentJob = room.memory.jobQueue[0];
+        }
+    },
+    //Process the room's job queue
+    processJob: function(room){
+        if(!room.memory.inited) this.initMemory(room);
+        if(room.memory.currentJob){
+            if(!MRoomJobs[room.memory.currentJob.job](room, ...room.memory.currentJob.jobArgs) || room.memory.currentJob.repeat){
+                room.memory.jobQueue.push(room.memory.currentJob);
+            }
+            room.memory.currentJob = null;
+            this.nextJob(room);
+        }
+    },
+    //Counts spawns and extensions to find max possable creep size
+    maxCreepCost: function(room){
+        return 300 + 50 * room.find(FIND_MY_STRUCTURES, {filter: (structure) => structure.sturctureType == STRUCTURE_EXTENSION}).length;
+    },
+    //Check for creep death in assignments, return if we are below maximum
+    updateTaskAssign(room, task){
+        let validCreeps = [];
+        for(let creepId of room.memory.taskAssigns[task].assigned){
+            if(Game.getObjectById(creepId)) validCreeps.push(creepId);
+        }
+        room.memory.taskAssigns[task].assigned = validCreeps;
+        return room.memory.taskAssigns[task].assigned < room.memory.taskAssigns[task].max;
     }
 };
 
