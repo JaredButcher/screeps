@@ -208,6 +208,13 @@ const roomJobs = {
             }
         }
         return false;
+    },
+    searchForHostiles: function(room){
+        if(room.memory.defcon == 0){
+            let hostiles = room.find(FIND_HOSTILE_CREEPS);
+            if(hostiles.length > 0) room.memory.defcon = 1;
+        }
+        return true;
     }
 };
 

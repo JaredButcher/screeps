@@ -1,9 +1,13 @@
-var roomMod = require('room');
+var MRoomRunner = require('room');
+var MCreepUtil = require('creepUtil');
+var MSuperviser = require('superviser')
 
 module.exports.loop = function(){
-    command = null;
-    for (let name in Game.rooms){
-        let room = Game.rooms[name];
-        roomMod.run(room, command);
+    MSuperviser.run();
+    for (let room of Game.rooms){
+        MRoomRunner.run(room);
+    }
+    for (let creep of Game.creeps){
+        MCreepUtil.processCommand(creep);
     }
 };
