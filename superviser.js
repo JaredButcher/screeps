@@ -4,4 +4,4 @@ var superviser = {
     }
 }
 
-modules.exports = superviser;
+module.exports = superviser;

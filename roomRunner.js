@@ -1,4 +1,5 @@
 let MRoomUtils = require('roomUtil');
+let MRoomJobs = require('roomJobs');
 
 //Decide on what should be done in this room
 function updateRoom(room){
@@ -12,7 +13,7 @@ function updateRoom(room){
             if(newLevel){
                 //Target creep counts
                 room.memory.taskAssigns["REPAIR"].max = 1;
-                room.memory.taskAssigns["UPGRADE"].max = Object.keys(room.memory.goals.sources).length;
+                room.memory.taskAssigns["UPGRADE"].max = Object.keys(room.memory.sources).length;
                 room.memory.taskAssigns["TRANSPORT"].max = 0;
                 room.memory.taskAssigns["BUILD"].max = 2;
                 //Build new buildings
@@ -28,7 +29,7 @@ function updateRoom(room){
             if(newLevel){
                 //Target creep counts
                 room.memory.taskAssigns["REPAIR"].max = 1;
-                room.memory.taskAssigns["UPGRADE"].max = Object.keys(room.memory.goals.sources).length;
+                room.memory.taskAssigns["UPGRADE"].max = Object.keys(room.memory.sources).length;
                 room.memory.taskAssigns["TRANSPORT"].max = 0;
                 room.memory.taskAssigns["BUILD"].max = 2;
                 //Build new buildings
@@ -38,7 +39,7 @@ function updateRoom(room){
             if(newLevel){
                 //Target creep counts
                 room.memory.taskAssigns["REPAIR"].max = 1;
-                room.memory.taskAssigns["UPGRADE"].max = Object.keys(room.memory.goals.sources).length;
+                room.memory.taskAssigns["UPGRADE"].max = Object.keys(room.memory.sources).length;
                 room.memory.taskAssigns["TRANSPORT"].max = 0;
                 room.memory.taskAssigns["BUILD"].max = 2;
                 //Build new buildings
@@ -48,7 +49,7 @@ function updateRoom(room){
             if(newLevel){
                 //Target creep counts
                 room.memory.taskAssigns["REPAIR"].max = 1;
-                room.memory.taskAssigns["UPGRADE"].max = Object.keys(room.memory.goals.sources).length;
+                room.memory.taskAssigns["UPGRADE"].max = Object.keys(room.memory.sources).length;
                 room.memory.taskAssigns["TRANSPORT"].max = 0;
                 room.memory.taskAssigns["BUILD"].max = 2;
                 //Build new buildings
@@ -58,7 +59,7 @@ function updateRoom(room){
             if(newLevel){
                 //Target creep counts
                 room.memory.taskAssigns["REPAIR"].max = 1;
-                room.memory.taskAssigns["UPGRADE"].max = Object.keys(room.memory.goals.sources).length;
+                room.memory.taskAssigns["UPGRADE"].max = Object.keys(room.memory.sources).length;
                 room.memory.taskAssigns["TRANSPORT"].max = 0;
                 room.memory.taskAssigns["BUILD"].max = 2;
                 //Build new buildings
@@ -68,7 +69,7 @@ function updateRoom(room){
             if(newLevel){
                 //Target creep counts
                 room.memory.taskAssigns["REPAIR"].max = 2;
-                room.memory.taskAssigns["UPGRADE"].max = Object.keys(room.memory.goals.sources).length;
+                room.memory.taskAssigns["UPGRADE"].max = Object.keys(room.memory.sources).length;
                 room.memory.taskAssigns["TRANSPORT"].max = 0;
                 room.memory.taskAssigns["BUILD"].max = 2;
                 //Build new buildings
@@ -78,7 +79,7 @@ function updateRoom(room){
             if(newLevel){
                 //Target creep counts
                 room.memory.taskAssigns["REPAIR"].max = 2;
-                room.memory.taskAssigns["UPGRADE"].max = Object.keys(room.memory.goals.sources).length;
+                room.memory.taskAssigns["UPGRADE"].max = Object.keys(room.memory.sources).length;
                 room.memory.taskAssigns["TRANSPORT"].max = 0;
                 room.memory.taskAssigns["BUILD"].max = 2;
                 //Build new buildings
@@ -100,8 +101,17 @@ function updateRoom(room){
 var roomRunner = {
     run: function(room){
         if(room.controller.my){
-            MRoomUtils.initRoom(room);
+            MRoomJobs.manage.initRoom(room);
             updateRoom(room);
+
+            for(let sourceId in room.memory.sources){
+                //room.memory.sources[sourceId].road = false;
+                if(!room.memory.sources[sourceId].road){
+                    MRoomUtils.buildRoad(room, room.controller.pos, Game.getObjectById(sourceId).pos);
+                    room.memory.sources[sourceId].road = true;
+                    break;
+                }
+            }
 
             //Find hostiles and enter defcon
             if(room.memory.defcon > 0){
@@ -124,7 +134,7 @@ var roomRunner = {
                 }
             }
             for(let i = 0; i < room.memory.actionsPerTick; ++i){
-                MRoomUtils.processJob(room);
+                MRoomJobs.manage.processJob(room);
             }   
         }
     }

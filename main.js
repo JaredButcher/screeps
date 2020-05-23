@@ -1,13 +1,22 @@
-var MRoomRunner = require('room');
-var MCreepUtil = require('creepUtil');
-var MSuperviser = require('superviser')
+var MCreepCommands = require('creepCommands');
+var MSuperviser = require('superviser');
+var MRoomRunner = require('roomRunner');
 
 module.exports.loop = function(){
-    MSuperviser.run();
-    for (let room of Game.rooms){
-        MRoomRunner.run(room);
+    if(!Memory.inited){
+        Memory.inited = true;
+        Memory.lifetimeCreepSpawnCount = Math.floor(Math.random() * 100000);
     }
-    for (let creep of Game.creeps){
-        MCreepUtil.processCommand(creep);
+    MSuperviser.run();
+    for (let room in Game.rooms){
+        MRoomRunner.run(Game.rooms[room]);
+    }
+    for (let creep in Game.creeps){
+        MCreepCommands.manage.processCommand(Game.creeps[creep]);
+    }
+    for(var i in Memory.creeps) {
+        if(!Game.creeps[i]) {
+            delete Memory.creeps[i];
+        }
     }
 };
