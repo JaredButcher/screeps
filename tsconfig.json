@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "noImplicitThis": false,
+        "strict": true,
+        "skipLibCheck": true,
+        "allowUnreachableCode": false,
+        "allowUnusedLabels": true,
+        "baseUrl": "src/",
+        "outDir": "build/"
+    },
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}
