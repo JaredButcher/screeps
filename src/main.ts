@@ -1,9 +1,6 @@
 
 'use strict';
-import {test} from './dispatch/dispatch';
 
-function loop(){
-    test();
+export function loop(){
+
 }
-
-export {loop};
