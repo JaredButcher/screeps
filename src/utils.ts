@@ -35,8 +35,9 @@ export function cleanMemory(){
 }
 
 export function initMemory(){
+    Memory.inited = true;
     Memory.promises = {};
     Memory.promiseCount = Math.floor(Math.random() * 100000);
     Memory.districts = {};
-    Memory.president = {aQueue: [], aPromises: []};
+    Memory.president = {aQueue: [], aPromises: [], aPriority: []};
 }

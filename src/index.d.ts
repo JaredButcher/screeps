@@ -2982,6 +2982,7 @@ interface PriceHistory {
     stddevPrice: number;
 }
 interface Memory {
+    inited: boolean;
     promiseCount: number;
     promises: {[id: string]: {status: PromiseState, age: number}};
     districts: {[name: string]: DisctrictMemory};
@@ -3006,7 +3007,9 @@ interface FlagMemory {}
 interface PowerCreepMemory {}
 interface RoomMemory extends RunnerJobMemory{}
 interface SpawnMemory {}
-interface DisctrictMemory extends RunnerJobMemory {}
+interface DisctrictMemory extends RunnerJobMemory {
+    name: string;
+}
 interface PresidentMemory extends RunnerJobMemory {}
 
 declare const Memory: Memory;

@@ -1,27 +1,54 @@
-import {Queueable, registrare} from '../queueable/queueable';
 import {PromiseState} from "../utils";
 export {PromiseState};
 
+export interface QueueableConstructor{
+    new (...args: any[]): Queueable;
+}
 
+export let registrare: {[name: string]: QueueableConstructor} = {};
+
+export class Queueable{
+    promiseId: string;
+    repeating: boolean;
+    args: object;
+    name: string = "Queueable";
+    constructor(args: object = {}, repeating: boolean = false, promiseId?: string){
+        this.repeating = repeating;
+        this.args = args;
+        if(promiseId === undefined){
+            this.promiseId = Memory.promiseCount.toString();
+            Memory.promiseCount = (Memory.promiseCount + 1) % 1000000000;
+        }else{
+            this.promiseId = promiseId;
+        }
+    }
+    run(runner: Runner): boolean{
+        this.end(PromiseState.SUCESS);
+        return true;
+    }
+    validate(runner: Runner): boolean{
+        return true;
+    }
+    start(){
+        Memory.promises[this.promiseId] = {status: PromiseState.RUNNING, age: 0};
+    }
+    end(status: PromiseState, force = false){
+        if(force || !this.repeating){
+            Memory.promises[this.promiseId] = {status: status, age: Game.time};
+        }
+    }
+}
+
+registrare["Queueable"] = Queueable;
 
 export class Runner{
-    memory: runnerMemory;
+    memory: RunnerMemory;
     actor: object;
-    constructor(actor: object, memory: runnerMemory){
+    constructor(actor: object, memory: RunnerMemory){
         this.actor = actor;
         this.memory = memory;
     }
-    run(){
-        if(this.memory.aQueue[0]){
-            let aCurrentAction: Queueable = this.parseAction(this.memory.aQueue[0]);
-            if(aCurrentAction.run(this.actor)){
-                if(aCurrentAction.repeating){
-                    this.queue(aCurrentAction);
-                }
-                this.next();
-            }
-        }
-    }
+    run(){}
     queue(action: Queueable){
         action.start();
         this.memory.aQueue.push(action);
@@ -45,3 +72,4 @@ export class Runner{
         this.memory.aQueue.shift();
     }
 }
+
