@@ -12,7 +12,7 @@ export class Queueable{
     repeating: boolean;
     args: object;
     name: string = "Queueable";
-    constructor(args: object = {}, repeating: boolean = false, promiseId?: string){
+    constructor(args: object, repeating: boolean = false, promiseId?: string){
         this.repeating = repeating;
         this.args = args;
         if(promiseId === undefined){
@@ -24,9 +24,6 @@ export class Queueable{
     }
     run(runner: Runner): boolean{
         this.end(PromiseState.SUCESS);
-        return true;
-    }
-    validate(runner: Runner): boolean{
         return true;
     }
     start(){
