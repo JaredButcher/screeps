@@ -2983,18 +2983,31 @@ interface PriceHistory {
 }
 interface Memory {
     promiseCount: number;
+    promises: {[id: string]: {status: PromiseState, age: number}};
+    districts: {[name: string]: DisctrictMemory};
     creeps: {[name: string]: CreepMemory};
     powerCreeps: {[name: string]: PowerCreepMemory};
     flags: {[name: string]: FlagMemory};
     rooms: {[name: string]: RoomMemory};
     spawns: {[name: string]: SpawnMemory};
+    president: PresidentMemory;
 }
 
-interface CreepMemory {}
+interface RunnerMemory{
+    aQueue: Queueable[];
+    aPromises: string[];
+}
+interface RunnerJobMemory extends RunnerMemory{
+    aPriority: Queueable[];
+}
+
+interface CreepMemory extends RunnerMemory {}
 interface FlagMemory {}
 interface PowerCreepMemory {}
-interface RoomMemory {}
+interface RoomMemory extends RunnerJobMemory{}
 interface SpawnMemory {}
+interface DisctrictMemory extends RunnerJobMemory {}
+interface PresidentMemory extends RunnerJobMemory {}
 
 declare const Memory: Memory;
 /**
