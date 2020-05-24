@@ -2,10 +2,10 @@ import {Queueable, registrare, Runner, PromiseState} from '../runner/runner';
 import {CreepRunner} from './creepRunner';
 
 export interface CreepTaskArgs{
-    x: number;
-    y: number;
-    range: number;
-    target?: string;
+    x?: number;
+    y?: number;
+    roomName?: string;
+    range?: number;
 }
 
 export class CreepTask extends Queueable{
@@ -13,14 +13,19 @@ export class CreepTask extends Queueable{
         super(args, repeating, promiseId);
     }
     run(runner: CreepRunner): boolean{
-        let creep = <Creep>runner.actor;
         let args = <CreepTaskArgs>this.args;
-        if(Math.abs(creep.pos.x - args.x) <= args.range && Math.abs(creep.pos.y - args.y) <= args.range){
-            return true
-        }else{
-            creep.moveTo(args.x, args.y);
-            return false;
-        } 
+        if(args.x && args.y && args.roomName){
+            if(args.range === undefined) args.range = 0;
+            let creep = <Creep>runner.actor;
+            if(creep.room.name == args.roomName && Math.abs(creep.pos.x - args.x) <= args.range && 
+                Math.abs(creep.pos.y - args.y) <= args.range){
+                return true
+            }else{
+                creep.moveTo(new RoomPosition(args.x, args.y, args.roomName));
+                return false;
+            } 
+        }
+        return true;
     }
 }
 

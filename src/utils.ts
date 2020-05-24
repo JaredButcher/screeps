@@ -1,7 +1,7 @@
 const PROMISE_LIFE = 100;
 
 export enum PromiseState {RUNNING, SUCESS, ERR_DEAD, ERR_INVALID_ARGS, 
-    ERR_INVALID_TARGET, ERR_LACK_RESOURCE, ERR_PREEMPTED};
+    ERR_INVALID_TARGET, ERR_LACK_RESOURCE, ERR_PREEMPTED, ERR_MISC_ERROR};
 
 export function cleanMemory(){
     //Find dead creeps and end their tasks
