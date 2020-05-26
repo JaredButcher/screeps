@@ -3001,11 +3001,21 @@ interface RunnerMemory{
 interface RunnerJobMemory extends RunnerMemory{
     aPriority: Queueable[];
 }
+interface ResourceMemory{
+    hasContainer: boolean;
+    harvesters: Id<Creep>[];
+    transporters: Id<Creep>[];
+    hasRoad: boolean;
+}
 
 interface CreepMemory extends RunnerMemory {}
 interface FlagMemory {}
 interface PowerCreepMemory {}
-interface RoomMemory extends RunnerJobMemory{}
+interface RoomMemory extends RunnerJobMemory{
+    sources: {[id: string]: ResourceMemory};
+    minerals: {[id: string]: ResourceMemory};
+    deposits: {[id: string]: ResourceMemory}
+}
 interface SpawnMemory {}
 interface DisctrictMemory extends RunnerJobMemory {
     name: string;

@@ -1,6 +1,7 @@
 import {registrare, PromiseState} from '../runner/runner';
 import {CreepRunner} from './creepRunner';
 import {CreepTask, CreepTaskArgs} from './CreepTask';
+import {CreepTaskHarvest, CreepTaskArgsHarvest} from './creepTaskHarvest';
 
 export interface CreepTaskArgsFill extends CreepTaskArgs{
     targetIds?: Id<StorageStructure>[];
@@ -10,25 +11,34 @@ export interface CreepTaskArgsFill extends CreepTaskArgs{
     amount?: number
 }
 
-type StorageStructure = Structure<STRUCTURE_CONTAINER> | Structure<STRUCTURE_STORAGE>;
+export type StorageStructure = Structure<STRUCTURE_CONTAINER> | Structure<STRUCTURE_STORAGE>;
 
 export class CreepTaskFill extends CreepTask{
-    constructor(args: CreepTaskArgsFill, repeating: boolean = false, promiseId?: string){
+    constructor(runner: CreepRunner, args: CreepTaskArgsFill, repeating: boolean = false, promiseId?: string){
         args.range = 1;
-        super(args, repeating, promiseId);
+        super(runner, args, repeating, promiseId);
     }
-    run(runner: CreepRunner): boolean{
-        let creep = <Creep>runner.actor;
+    run(): boolean{
+        let creep = <Creep>this.runner.actor;
         let args = <CreepTaskArgsFill>this.args;
         if((args.amount && creep.store.getUsedCapacity(args.resourceType) >= args.amount) || creep.store.getFreeCapacity(args.resourceType) == 0){
             this.end(PromiseState.SUCESS);
             return true;
         }
-        if(super.run(runner)){
+        if(super.run()){
             if(!args.targetId){
                 if(!this.setTarget(creep)){
-                    this.end(PromiseState.ERR_INVALID_TARGET);
-                    return true;
+                    let source = creep.pos.findClosestByRange(FIND_SOURCES);
+                    if(!source){
+                        this.end(PromiseState.ERR_MISC_ERROR);
+                        return false;
+                    }
+                    let harvestArgs:CreepTaskArgsHarvest = {
+                        resourceType: RESOURCE_ENERGY,
+                        targetId: source.id
+                    };
+                    this.runner.push(new CreepTaskHarvest(this.runner, harvestArgs));
+                    return false;
                 }else{
                     return false;
                 }

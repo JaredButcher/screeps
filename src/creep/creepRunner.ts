@@ -7,7 +7,7 @@ export class CreepRunner extends Runner{
     run(){
         if(this.memory.aQueue[0]){
             let aCurrentAction: Queueable = this.parseAction(this.memory.aQueue[0]);
-            if(aCurrentAction.run(this)){
+            if(aCurrentAction.run()){
                 if(aCurrentAction.repeating){
                     this.queue(aCurrentAction);
                 }

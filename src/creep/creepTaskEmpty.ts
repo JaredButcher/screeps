@@ -10,18 +10,18 @@ export interface CreepTaskArgsEmpty extends CreepTaskArgs{
 }
 
 export class CreepTaskEmpty extends CreepTask{
-    constructor(args: CreepTaskArgsEmpty, repeating: boolean = false, promiseId?: string){
+    constructor(runner: CreepRunner, args: CreepTaskArgsEmpty, repeating: boolean = false, promiseId?: string){
         args.range = 1;
-        super(args, repeating, promiseId);
+        super(runner, args, repeating, promiseId);
     }
-    run(runner: CreepRunner): boolean{
-        let creep = <Creep>runner.actor;
+    run(): boolean{
+        let creep = <Creep>this.runner.actor;
         let args = <CreepTaskArgsEmpty>this.args;
         if(creep.store.getUsedCapacity(args.resourceType) == 0){
             this.end(PromiseState.SUCESS);
             return true;
         }
-        if(super.run(runner)){
+        if(super.run()){
             if(!args.targetId){
                 if(!this.setTarget(creep)){
                     this.end(PromiseState.ERR_INVALID_TARGET);

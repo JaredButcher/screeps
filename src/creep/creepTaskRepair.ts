@@ -8,17 +8,17 @@ export interface CreepTaskArgsRepair extends CreepTaskArgs{
 }
 
 export class CreepTaskRepair extends CreepTask{
-    constructor(args: CreepTaskArgsRepair, repeating: boolean = false, promiseId?: string){
+    constructor(runner: CreepRunner, args: CreepTaskArgsRepair, repeating: boolean = false, promiseId?: string){
         let target: Structure = <Structure>Game.getObjectById(args.targetId);
         args.x = target.pos.x;
         args.y = target.pos.y;
         args.roomName = target.pos.roomName;
         args.range = 3;
-        super(args, repeating, promiseId);
+        super(runner, args, repeating, promiseId);
     }
-    run(runner: CreepRunner): boolean{
-        if(super.run(runner)){
-            let creep = <Creep>runner.actor;
+    run(): boolean{
+        if(super.run()){
+            let creep = <Creep>this.runner.actor;
             let args = <CreepTaskArgsRepair>this.args;
             let target: Structure = <Structure>Game.getObjectById(args.targetId);
             let status: ScreepsReturnCode = creep.repair(target);

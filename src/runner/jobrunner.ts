@@ -11,7 +11,7 @@ export class JobRunner extends Runner{
         for(let i = 0; i < this.jobsPerTick; ++i){
             if(this.memory.aQueue[0]){
                 let currentAction: Queueable = this.parseAction(this.memory.aQueue[0]);
-                if(currentAction.run(this)){
+                if(currentAction.run()){
                     if(currentAction.repeating){
                         this.queue(currentAction);
                     }
@@ -24,7 +24,7 @@ export class JobRunner extends Runner{
         let jobsToRemove: boolean[] = [];
         for(let job in (<RunnerJobMemory>this.memory).aPriority){
             let currentAction: Queueable = this.parseAction((<RunnerJobMemory>this.memory).aPriority[job]);
-            jobsToRemove.push(currentAction.run(this) && !currentAction.repeating);
+            jobsToRemove.push(currentAction.run() && !currentAction.repeating);
         }
         for(let i = jobsToRemove.length - 1; i >= 0; --i){
             if(jobsToRemove[i]){

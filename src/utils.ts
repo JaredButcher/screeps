@@ -41,3 +41,12 @@ export function initMemory(){
     Memory.districts = {};
     Memory.president = {aQueue: [], aPromises: [], aPriority: []};
 }
+
+export function fetchPromise(promiseId: string): PromiseState | null {
+    let entry = Memory.promises[promiseId];
+    if(entry){
+        return entry.status;
+    }else{
+        return null;
+    }
+}

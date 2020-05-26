@@ -12,9 +12,11 @@ export class Queueable{
     repeating: boolean;
     args: object;
     name: string = "Queueable";
-    constructor(args: object, repeating: boolean = false, promiseId?: string){
+    runner: Runner;
+    constructor(runner: Runner, args: object, repeating: boolean = false, promiseId?: string){
         this.repeating = repeating;
         this.args = args;
+        this.runner = runner;
         if(promiseId === undefined){
             this.promiseId = Memory.promiseCount.toString();
             Memory.promiseCount = (Memory.promiseCount + 1) % 1000000000;
@@ -22,7 +24,7 @@ export class Queueable{
             this.promiseId = promiseId;
         }
     }
-    run(runner: Runner): boolean{
+    run(): boolean{
         this.end(PromiseState.SUCESS);
         return true;
     }
@@ -63,7 +65,7 @@ export class Runner{
         this.memory.aQueue = [];
     }
     parseAction(action: Queueable): Queueable{
-        return new registrare[action.name](action.args, action.repeating, action.promiseId);
+        return new registrare[action.name](this, action.args, action.repeating, action.promiseId);
     }
     protected next(){
         this.memory.aQueue.shift();

@@ -3,8 +3,8 @@ import {CreepRunner} from './creepRunner';
 import {CreepTask} from './CreepTask';
 
 export class CreepTaskMoveTo extends CreepTask{
-    run(runner: CreepRunner): boolean{
-        if(super.run(runner)){
+    run(): boolean{
+        if(super.run()){
             this.end(PromiseState.SUCESS);
             return true;
         }

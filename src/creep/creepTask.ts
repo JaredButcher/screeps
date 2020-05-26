@@ -9,14 +9,14 @@ export interface CreepTaskArgs{
 }
 
 export class CreepTask extends Queueable{
-    constructor(args: CreepTaskArgs, repeating: boolean = false, promiseId?: string){
-        super(args, repeating, promiseId);
+    constructor(runner: CreepRunner, args: CreepTaskArgs, repeating: boolean = false, promiseId?: string){
+        super(runner, args, repeating, promiseId);
     }
-    run(runner: CreepRunner): boolean{
+    run(): boolean{
         let args = <CreepTaskArgs>this.args;
         if(args.x && args.y && args.roomName){
             if(args.range === undefined) args.range = 0;
-            let creep = <Creep>runner.actor;
+            let creep = <Creep>this.runner.actor;
             if(creep.room.name == args.roomName && Math.abs(creep.pos.x - args.x) <= args.range && 
                 Math.abs(creep.pos.y - args.y) <= args.range){
                 return true
