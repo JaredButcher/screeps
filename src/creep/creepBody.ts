@@ -36,23 +36,17 @@ export class GeneralCreep extends CreepBody{
 
 export class DropHarvestCreep extends CreepBody{
     constructor(cost: number){
-        super(cost, 1750, 350, "DropHarvestCreep");
+        super(cost, 1700, 450, "DropHarvestCreep");
         for(let i = this.cost; i >= 0;){
             if(i >= 50){
                 this.body.push(MOVE);
                 i -= 50;
             }
-            if(i >= 100){
-                this.body.push(WORK);
-                i -= 100;
-            }
-            if(i >= 100){
-                this.body.push(WORK);
-                i -= 100;
-            }
-            if(i >= 100){
-                this.body.push(WORK);
-                i -= 100;
+            for(let j = 0; j < 4; ++j){
+                if(i >= 100){
+                    this.body.push(WORK);
+                    i -= 100;
+                }
             }
         }
     }
@@ -60,7 +54,7 @@ export class DropHarvestCreep extends CreepBody{
 
 export class LinkHarvestCreep extends CreepBody{
     constructor(cost: number){
-        super(cost, 1700, 300, "LinkHarvestCreep");
+        super(cost, 1750, 400, "LinkHarvestCreep");
         let i = this.cost
         if(i >= 50){
             this.body.push(MOVE);
@@ -70,30 +64,22 @@ export class LinkHarvestCreep extends CreepBody{
             this.body.push(CARRY);
             i -= 50;
         }
-        if(i >= 100){
-            this.body.push(WORK);
-            i -= 100;
-        }
-        if(i >= 100){
-            this.body.push(WORK);
-            i -= 100;
+        for(let j = 0; j < 3; ++j){
+            if(i >= 100){
+                this.body.push(WORK);
+                i -= 100;
+            }
         }
         for(; i >= 0;){
             if(i >= 50){
                 this.body.push(MOVE);
                 i -= 50;
             }
-            if(i >= 100){
-                this.body.push(WORK);
-                i -= 100;
-            }
-            if(i >= 100){
-                this.body.push(WORK);
-                i -= 100;
-            }
-            if(i >= 100){
-                this.body.push(WORK);
-                i -= 100;
+            for(let j = 0; j < 4; ++j){
+                if(i >= 100){
+                    this.body.push(WORK);
+                    i -= 100;
+                }
             }
         }
     }
@@ -101,23 +87,17 @@ export class LinkHarvestCreep extends CreepBody{
 
 export class FerryCreep extends CreepBody{
     constructor(cost: number){
-        super(cost, 2500, 200, "FerryCreep");
+        super(cost, 2500, 250, "FerryCreep");
         for(let i = this.cost; i >= 0;){
             if(i >= 50){
                 this.body.push(MOVE);
                 i -= 50;
             }
-            if(i >= 50){
-                this.body.push(CARRY);
-                i -= 50;
-            }
-            if(i >= 50){
-                this.body.push(CARRY);
-                i -= 50;
-            }
-            if(i >= 50){
-                this.body.push(CARRY);
-                i -= 50;
+            for(let j = 0; j < 4; ++j){
+                if(i >= 50){
+                    this.body.push(CARRY);
+                    i -= 50;
+                }
             }
         }
     }
@@ -125,15 +105,17 @@ export class FerryCreep extends CreepBody{
 
 export class FastFerryCreep extends CreepBody{
     constructor(cost: number){
-        super(cost, 2500, 100, "FastFerryCreep");
+        super(cost, 2500, 150, "FastFerryCreep");
         for(let i = this.cost; i >= 0;){
             if(i >= 50){
                 this.body.push(MOVE);
                 i -= 50;
             }
-            if(i >= 50){
-                this.body.push(CARRY);
-                i -= 50;
+            for(let j = 0; j < 2; ++j){
+                if(i >= 50){
+                    this.body.push(CARRY);
+                    i -= 50;
+                }
             }
         }
     }

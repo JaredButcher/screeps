@@ -2984,6 +2984,7 @@ interface PriceHistory {
 interface Memory {
     inited: boolean;
     promiseCount: number;
+    creepCount: number;
     promises: {[id: string]: {status: PromiseState, age: number}};
     districts: {[name: string]: DisctrictMemory};
     creeps: {[name: string]: CreepMemory};
@@ -3001,20 +3002,36 @@ interface RunnerMemory{
 interface RunnerJobMemory extends RunnerMemory{
     aPriority: Queueable[];
 }
+interface CreepPromiseMemory{
+    creep: Creep;
+    promise: string;
+}
 interface ResourceMemory{
     hasContainer: boolean;
-    harvesters: Id<Creep>[];
-    transporters: Id<Creep>[];
+    containerId?: Id<STRUCTURE_CONTAINER>;
+    harvesters: CreepPromiseMemory[];
+    transporters: CreepPromiseMemory[];
     hasRoad: boolean;
 }
+interface CreepBodyMemory{
+    bodyType: string;
+    body: BodyPartConstant[];
+    cost: number;
+    priority: boolean;
+}
 
-interface CreepMemory extends RunnerMemory {}
+interface CreepMemory extends RunnerMemory {
+    bodyType: string;
+}
 interface FlagMemory {}
 interface PowerCreepMemory {}
 interface RoomMemory extends RunnerJobMemory{
     sources: {[id: string]: ResourceMemory};
     minerals: {[id: string]: ResourceMemory};
-    deposits: {[id: string]: ResourceMemory}
+    deposits: {[id: string]: ResourceMemory};
+    crashRecovery: boolean;
+    spawnQueue: CreepBodyMemory[];
+    spawning: {[id: string]: CreepBodyMemory};
 }
 interface SpawnMemory {}
 interface DisctrictMemory extends RunnerJobMemory {
