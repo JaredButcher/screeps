@@ -3003,15 +3003,17 @@ interface RunnerJobMemory extends RunnerMemory{
     aPriority: Queueable[];
 }
 interface CreepPromiseMemory{
-    creep: Creep;
+    creep: string;
     promise: string;
 }
 interface ResourceMemory{
     hasContainer: boolean;
-    containerId?: Id<STRUCTURE_CONTAINER>;
+    containerId?: Id<StructureContainer>;
     harvesters: CreepPromiseMemory[];
     transporters: CreepPromiseMemory[];
     hasRoad: boolean;
+    hasLink: boolean;
+    linkId?: Id<StructureLink>;  
 }
 interface CreepBodyMemory{
     bodyType: string;
@@ -3032,6 +3034,7 @@ interface RoomMemory extends RunnerJobMemory{
     crashRecovery: boolean;
     spawnQueue: CreepBodyMemory[];
     spawning: {[id: string]: CreepBodyMemory};
+    linkCamper?: CreepPromiseMemory;
 }
 interface SpawnMemory {}
 interface DisctrictMemory extends RunnerJobMemory {

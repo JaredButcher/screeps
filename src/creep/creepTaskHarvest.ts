@@ -7,9 +7,11 @@ export interface CreepTaskArgsHarvest extends CreepTaskArgs{
     untilAmount?: number;
     resourceType: ResourceConstant;
     targetId: Id<HarvestTarget>;
+    drop?: Id<DropTarget>;
 }
 
 type HarvestTarget = Source | Mineral<MineralConstant> | Deposit;
+export type DropTarget = Structure<STRUCTURE_CONTAINER> | Structure<STRUCTURE_LINK>;
 
 export class CreepTaskHarvest extends CreepTask{
     constructor(runner: CreepRunner, args: CreepTaskArgsHarvest, repeating: boolean = false, promiseId?: string){
@@ -25,7 +27,10 @@ export class CreepTaskHarvest extends CreepTask{
             let creep = <Creep>this.runner.actor;
             let args = <CreepTaskArgsHarvest>this.args;
             let status: ScreepsReturnCode = creep.harvest(<HarvestTarget>Game.getObjectById(args.targetId));
-            if(creep.store.getFreeCapacity(args.resourceType) == 0){
+            if(args.drop){
+                let target = <DropTarget>Game.getObjectById(args.drop);
+                creep.transfer(target, args.resourceType);
+            }else if(creep.store.getFreeCapacity(args.resourceType) == 0){
                 this.end(PromiseState.SUCESS);
                 return true;
             }
@@ -40,27 +45,6 @@ export class CreepTaskHarvest extends CreepTask{
             }
         }
         return false;
-    }
-    start(){
-        let creep = <Creep>this.runner.actor;
-        let args = <CreepTaskArgsHarvest>this.args;
-        let target = <HarvestTarget>Game.getObjectById(args.targetId);
-        if(target.room){
-            target.room.memory.sources[<Id<Source>>args.targetId].harvesters.push(creep.id);
-        }
-        super.start();
-    }
-    end(status: PromiseState, force = false){
-        if(!this.repeating || force){
-            let creep = <Creep>this.runner.actor;
-            let args = <CreepTaskArgsHarvest>this.args;
-            let target = <HarvestTarget>Game.getObjectById(args.targetId);
-            if(target.room){
-                target.room.memory.sources[<Id<Source>>args.targetId].harvesters = 
-                    target.room.memory.sources[<Id<Source>>args.targetId].harvesters.filter((x) => x != creep.id);
-            }
-            super.end(status);
-        }
     }
 }
 

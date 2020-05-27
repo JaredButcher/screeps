@@ -18,7 +18,7 @@ export function loop(){
     }
     for(let creepId in Game.creeps){
         let creep = <Creep>Game.getObjectById(creepId);
-        new CreepRunner(creep).run();
+        if(!creep.spawning) new CreepRunner(creep).run();
     }
     cleanMemory();
 }

@@ -28,7 +28,8 @@ export class RoomJobValidateEnergy extends RoomJob{
                 }
             }
             sourceEntry.transporters = validEntries;
-            if(sourceEntry.harvesters.length != 0 && (sourceEntry.containerId != undefined || sourceEntry.transporters.length > 0)){
+            if(sourceEntry.harvesters.length != 0 && 
+                (sourceEntry.containerId && sourceEntry.transporters.length > 0 || room.memory.linkCamper && sourceEntry.linkId || !sourceEntry.containerId && !sourceEntry.linkId)){
                 crashing = false;
             }
         }

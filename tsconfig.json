@@ -6,7 +6,9 @@
         "allowUnreachableCode": false,
         "allowUnusedLabels": true,
         "baseUrl": "src/",
-        "outDir": "build/"
+
+        "outFile": "build/main.js",
+        "module":"amd"
     },
     "include": [
         "src/**/*"

@@ -34,27 +34,9 @@ export class GeneralCreep extends CreepBody{
     }
 }
 
-export class DropHarvestCreep extends CreepBody{
+export class HarvestCreep extends CreepBody{
     constructor(cost: number){
-        super(cost, 1700, 450, "DropHarvestCreep");
-        for(let i = this.cost; i >= 0;){
-            if(i >= 50){
-                this.body.push(MOVE);
-                i -= 50;
-            }
-            for(let j = 0; j < 4; ++j){
-                if(i >= 100){
-                    this.body.push(WORK);
-                    i -= 100;
-                }
-            }
-        }
-    }
-}
-
-export class LinkHarvestCreep extends CreepBody{
-    constructor(cost: number){
-        super(cost, 1750, 400, "LinkHarvestCreep");
+        super(cost, 1750, 400, "HarvestCreep");
         let i = this.cost
         if(i >= 50){
             this.body.push(MOVE);
