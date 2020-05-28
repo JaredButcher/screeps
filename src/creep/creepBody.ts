@@ -4,19 +4,19 @@ export class CreepBody{
     maxCost: number;
     minCost: number;
     cost: number;
-    name: string;
-    constructor(cost: number, maxCost: number, minCost: number, name: string){
+    bodyType: CreepTypes;
+    constructor(cost: number, maxCost: number, minCost: number, bodyType: CreepTypes){
         this.cost = Math.min(Math.max(cost, minCost), maxCost);
         this.maxCost = maxCost;
         this.minCost = minCost;
-        this.name = name;
+        this.bodyType = bodyType;
         this.body = [];
     }
 }
 
 export class GeneralCreep extends CreepBody{
     constructor(cost: number){
-        super(cost, 2500, 200, "GeneralCreep");
+        super(cost, 2500, 200, CreepTypes.GENERAL);
         for(let i = this.cost; i >= 0;){
             if(i >= 50){
                 this.body.push(MOVE);
@@ -36,7 +36,7 @@ export class GeneralCreep extends CreepBody{
 
 export class HarvestCreep extends CreepBody{
     constructor(cost: number){
-        super(cost, 1750, 400, "HarvestCreep");
+        super(cost, 1750, 400, CreepTypes.HARVEST);
         let i = this.cost
         if(i >= 50){
             this.body.push(MOVE);
@@ -69,7 +69,7 @@ export class HarvestCreep extends CreepBody{
 
 export class FerryCreep extends CreepBody{
     constructor(cost: number){
-        super(cost, 2500, 250, "FerryCreep");
+        super(cost, 2500, 250, CreepTypes.TRANSPORT);
         for(let i = this.cost; i >= 0;){
             if(i >= 50){
                 this.body.push(MOVE);
@@ -87,7 +87,7 @@ export class FerryCreep extends CreepBody{
 
 export class FastFerryCreep extends CreepBody{
     constructor(cost: number){
-        super(cost, 2500, 150, "FastFerryCreep");
+        super(cost, 2500, 150, CreepTypes.TRANSPORT);
         for(let i = this.cost; i >= 0;){
             if(i >= 50){
                 this.body.push(MOVE);
@@ -105,7 +105,7 @@ export class FastFerryCreep extends CreepBody{
 
 export class ClaimCreep extends CreepBody{
     constructor(cost: number){
-        super(cost, 650, 650, "ClaimCreep");
+        super(cost, 650, 650, CreepTypes.CLAIM);
         this.body = [CLAIM, MOVE];
     }
 }

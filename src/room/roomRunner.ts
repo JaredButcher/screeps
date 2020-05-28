@@ -13,7 +13,7 @@ export class RoomRunner extends JobRunner{
     }
     //Returns creep id if found, true if spawning, else false
     //Only one priority can be used
-    findCreep(bodyType: string, prioritizeFull = false, prioritizeEmpty = false, override = false, prioritizeDistance?: RoomPosition): boolean | Id<Creep>{
+    findCreep(bodyType: CreepTypes, prioritizeFull = false, prioritizeEmpty = false, override = false, prioritizeDistance?: RoomPosition): boolean | Id<Creep>{
         let room = <Room>this.actor;
         //Find valid free creeps
         let creeps = room.find(FIND_MY_CREEPS, {filter: (x) => !x.spawning && x.memory.bodyType == bodyType && (override || x.memory.aQueue.length == 0)});
@@ -50,26 +50,26 @@ export class RoomRunner extends JobRunner{
         let room = <Room>this.actor;
         //Dont queue another of the same type that is currently spawning
         for(let spawnId in room.memory.spawning){
-            if(room.memory.spawning[spawnId].bodyType == body.name){
+            if(room.memory.spawning[spawnId].bodyType == body.bodyType){
                 return;
             }
         }
         if(priority){
             //If the same type as being pushed in is alreay here with priority, don't add
-            if(room.memory.spawnQueue.length > 0 && room.memory.spawnQueue[0].bodyType == body.name && room.memory.spawnQueue[0].priority){
+            if(room.memory.spawnQueue.length > 0 && room.memory.spawnQueue[0].bodyType == body.bodyType && room.memory.spawnQueue[0].priority){
                 return;
             }
         }else{
             //Don't queue another of the same type already in the queue
             for(let creep of room.memory.spawnQueue){
-                if(creep.bodyType == body.name){
+                if(creep.bodyType == body.bodyType){
                     return;
                 }
             }
         }
         let entry = {
             body: body.body,
-            bodyType: body.name,
+            bodyType: body.bodyType,
             cost: body.cost,
             priority: priority
         };

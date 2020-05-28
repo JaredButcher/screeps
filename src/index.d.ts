@@ -2981,6 +2981,21 @@ interface PriceHistory {
     avgPrice: number;
     stddevPrice: number;
 }
+
+enum CreepTypes{
+    GENERAL = "GENERAL",
+    HARVEST = "HARVEST",
+    TRANSPORT = "TRANSPORT",
+    CLAIM = "CLAIM"
+}
+enum CreepRoles{
+    HARVEST = "HARVEST", 
+    REPAIR = "REPAIR", 
+    UPGRADE = "UPGRADE", 
+    TRANSPORT = "TRANSPORT", 
+    BUILD = "BUILD"
+}
+
 interface Memory {
     inited: boolean;
     promiseCount: number;
@@ -3010,20 +3025,19 @@ interface ResourceMemory{
     hasContainer: boolean;
     containerId?: Id<StructureContainer>;
     harvesters: CreepPromiseMemory[];
-    transporters: CreepPromiseMemory[];
     hasRoad: boolean;
     hasLink: boolean;
     linkId?: Id<StructureLink>;  
 }
 interface CreepBodyMemory{
-    bodyType: string;
+    bodyType: CreepTypes;
     body: BodyPartConstant[];
     cost: number;
     priority: boolean;
 }
 
 interface CreepMemory extends RunnerMemory {
-    bodyType: string;
+    bodyType: CreepTypes;
 }
 interface FlagMemory {}
 interface PowerCreepMemory {}
@@ -3035,6 +3049,8 @@ interface RoomMemory extends RunnerJobMemory{
     spawnQueue: CreepBodyMemory[];
     spawning: {[id: string]: CreepBodyMemory};
     linkCamper?: CreepPromiseMemory;
+    creepRoles: {[key: string]: {current: CreepPromiseMemory[], max: number}};
+
 }
 interface SpawnMemory {}
 interface DisctrictMemory extends RunnerJobMemory {
