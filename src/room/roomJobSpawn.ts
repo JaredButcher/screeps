@@ -27,7 +27,8 @@ export class RoomJobSpawn extends RoomJob{
                 let name = spawnQueue[0].bodyType.toString() + Memory.creepCount;
                 if(spawns[0].spawnCreep(spawnQueue[0].body, name, {dryRun: true})){
                     spawns[0].spawnCreep(spawnQueue[0].body, name, {memory: {
-                        bodyType: spawnQueue[0].bodyType,
+                        bodyType: spawnQueue[0].bodyType, 
+                        inited: true,
                         aQueue: [],
                         aPromises: []
                     }});

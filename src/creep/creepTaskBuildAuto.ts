@@ -2,6 +2,7 @@ import {registrare, PromiseState} from '../runner/runner';
 import {CreepRunner} from './creepRunner';
 import {CreepTask, CreepTaskArgs} from './CreepTask';
 import {CreepTaskFill} from './creepTaskFill';
+import {getConstructionSiteFlags, activateConstructionSite} from '../room/roomUtils'
 
 export interface CreepTaskBuildAutoArgs extends CreepTaskArgs{
     targetId?: Id<ConstructionSite>;
@@ -26,6 +27,7 @@ export class CreepTaskBuildAuto extends CreepTask{
         }
         if(!args.targetId){
             //find target
+            let targetFlag = creep.pos.findClosestByRange(getConstructionSiteFlags(creep.room));
             let target = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
             if(target){
                 args.targetId = target.id;
@@ -33,6 +35,8 @@ export class CreepTaskBuildAuto extends CreepTask{
                 args.y = target.pos.y;
                 args.roomName = target.pos.roomName;
                 args.range = 3;
+            }else if(targetFlag){
+                activateConstructionSite(creep.room, targetFlag);
             }else{
                 this.end(PromiseState.SUCESS);
                 return true;

@@ -3025,6 +3025,7 @@ interface ResourceMemory{
     hasContainer: boolean;
     containerId?: Id<StructureContainer>;
     harvesters: CreepPromiseMemory[];
+    otherUsers: CreepPromiseMemory[];
     hasRoad: boolean;
     hasLink: boolean;
     linkId?: Id<StructureLink>;  
@@ -3037,11 +3038,16 @@ interface CreepBodyMemory{
 }
 
 interface CreepMemory extends RunnerMemory {
+    inited: boolean;
     bodyType: CreepTypes;
 }
 interface FlagMemory {}
+interface ConstructionSiteFlagMemory extends FlagMemory{
+    siteType: StructureConstant;
+}
 interface PowerCreepMemory {}
 interface RoomMemory extends RunnerJobMemory{
+    inited: boolean;
     sources: {[id: string]: ResourceMemory};
     minerals: {[id: string]: ResourceMemory};
     deposits: {[id: string]: ResourceMemory};
@@ -3054,6 +3060,7 @@ interface RoomMemory extends RunnerJobMemory{
 }
 interface SpawnMemory {}
 interface DisctrictMemory extends RunnerJobMemory {
+    inited: boolean;
     name: string;
 }
 interface PresidentMemory extends RunnerJobMemory {}

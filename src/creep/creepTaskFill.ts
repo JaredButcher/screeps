@@ -28,16 +28,19 @@ export class CreepTaskFill extends CreepTask{
         if(super.run()){
             if(!args.targetId){
                 if(!this.setTarget(creep)){
-                    let source = creep.pos.findClosestByRange(FIND_SOURCES);
-                    if(!source){
+                    let sourceMem = creep.room.memory.sources;
+                    let sources = creep.room.find(FIND_SOURCES).sort((a, b) => sourceMem[a.id].otherUsers.length - sourceMem[b.id].otherUsers.length);
+                    if(sources.length == 0){
                         this.end(PromiseState.ERR_MISC_ERROR);
                         return false;
                     }
                     let harvestArgs:CreepTaskArgsHarvest = {
                         resourceType: RESOURCE_ENERGY,
-                        targetId: source.id
+                        targetId: sources[0].id
                     };
-                    this.runner.push(new CreepTaskHarvest(this.runner, harvestArgs));
+                    let harvestTask = new CreepTaskHarvest(this.runner, harvestArgs)
+                    sourceMem[sources[0].id].otherUsers.push({creep: creep.id, promise: harvestTask.promiseId})
+                    this.runner.push(harvestTask);
                     return false;
                 }else{
                     return false;

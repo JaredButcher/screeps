@@ -3,7 +3,7 @@ import {RoomRunner} from './roomRunner';
 import {RoomJobArgs, RoomJob} from './roomJob';
 import {fetchPromise, PromiseState} from '../utils';
 
-export class RoomJobValidate extends RoomJob{
+export class RoomJobPlan extends RoomJob{
     constructor(runner: RoomRunner, args: RoomJobArgs, repeating: boolean = false, promiseId?: string){
         super(runner, args, repeating, promiseId);
     }
@@ -24,6 +24,18 @@ export class RoomJobValidate extends RoomJob{
             if(sourceEntry.harvesters.length != 0){
                 crashing = false;
             }
+            //Make sure not crashing
+            if(sourceEntry.harvesters.length != 0){
+                crashing = false;
+            }
+            //Remove expired other entries 
+            validEntries = [];
+            for(let creep of sourceEntry.otherUsers){
+                if(fetchPromise(creep.promise) == PromiseState.RUNNING){
+                    validEntries.push(creep);
+                }
+            }
+            sourceEntry.otherUsers = validEntries;
         }
         room.memory.crashRecovery = crashing;
         //Check other roles for expired creeps
@@ -36,8 +48,11 @@ export class RoomJobValidate extends RoomJob{
             }
             roleInfo.current = validCreeps;
         }
+        //Set creep goles and maxes
+        
+        //Build structures
         return false;
     }
 }
 
-registrare["RoomJobValidate"] = RoomJobValidate;
+registrare["RoomJobPlan"] = RoomJobPlan;
