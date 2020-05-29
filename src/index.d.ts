@@ -17,6 +17,8 @@
 
 // Game Constants
 
+declare var global: any;
+
 declare const OK: OK;
 declare const ERR_NOT_OWNER: ERR_NOT_OWNER;
 declare const ERR_NO_PATH: ERR_NO_PATH;
@@ -3053,6 +3055,7 @@ interface RoomMemory extends RunnerJobMemory{
     deposits: {[id: string]: ResourceMemory};
     crashRecovery: boolean;
     lastLevel: number;
+    defcon: number;
     corePos: {x: number, y: number, roomName: string};
     corePlaced: boolean;
     spawnQueue: CreepBodyMemory[];
@@ -3064,6 +3067,7 @@ interface SpawnMemory {}
 interface DisctrictMemory extends RunnerJobMemory {
     inited: boolean;
     name: string;
+    rooms: string[];
 }
 interface PresidentMemory extends RunnerJobMemory {}
 

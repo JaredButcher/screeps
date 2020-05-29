@@ -4,6 +4,7 @@ import {RoomRunner} from './room/roomRunner';
 import {DistrictRunner} from './district/districtRunner';
 import {PresidentRunner} from './president/presidentRunner';
 import {cleanMemory, initMemory} from './utils';
+import './consoleCommands';
 
 export function loop(){
     if(!Memory.inited){

@@ -1,3 +1,6 @@
+import {initDistrictMemory} from './district/districtUtils';
+import {initRoomMemory} from './room/roomUtils';
+
 const PROMISE_LIFE = 100;
 
 export enum PromiseState {RUNNING, SUCESS, ERR_DEAD, ERR_INVALID_ARGS, 
@@ -40,6 +43,31 @@ export function initMemory(){
     Memory.promiseCount = Math.floor(Math.random() * 100000);
     Memory.districts = {};
     Memory.president = {aQueue: [], aPromises: [], aPriority: []};
+    for(let district in Memory.districts){
+        initDistrictMemory(Memory.districts[district]);
+    }
+    for(let roomName in Game.rooms){
+        initRoomMemory(Game.rooms[roomName]);
+    }
+    for(let creepId in Game.creeps){
+        let creep = <Creep>Game.getObjectById(creepId);
+        creep.memory.inited = true;
+        creep.memory.aPromises = [];
+        creep.memory.aQueue = [];
+        if(WORK in creep.body){
+            creep.memory.bodyType = CreepTypes.GENERAL;
+        }else if(CLAIM in creep.body){
+            creep.memory.bodyType = CreepTypes.CLAIM;
+        }else if(CARRY in creep.body){
+            creep.memory.bodyType = CreepTypes.TRANSPORT;
+        }else if(ATTACK in creep.body){
+
+        }else if(RANGED_ATTACK in creep.body){
+
+        }else if(HEAL in creep.body){
+            
+        }
+    }
 }
 
 export function fetchPromise(promiseId: string): PromiseState | null {

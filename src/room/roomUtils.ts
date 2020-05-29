@@ -1,4 +1,12 @@
 import {isFlagOfType, flagTypes} from '../flags';
+import {RoomRunner} from './roomRunner';
+import {RoomJobHarvestSource} from './roomJobHarvestSource';
+import {RoomJobDefense} from './roomJobDefense';
+import {RoomJobBuild} from './roomJobBuild';
+import {RoomJobRepair} from './roomJobRepair';
+import {RoomJobUpgrade} from './roomJobUpgrade';
+import {RoomJobSpawn} from './roomJobSpawn';
+import {RoomJobPlan} from './roomJobPlan';
 
 
 export function getConstructionSiteFlags(room: Room){
@@ -14,6 +22,7 @@ export function initRoomMemory(room: Room) {
     room.memory.crashRecovery = false;
     room.memory.lastLevel = 0;
     room.memory.corePlaced = false;
+    room.memory.defcon = 0;
     if(room.controller){
         room.memory.corePos = room.controller.pos
     }else{
@@ -29,13 +38,21 @@ export function initRoomMemory(room: Room) {
     for(let mineral of room.find(FIND_MINERALS)){
         room.memory.minerals[mineral.id] = {hasContainer: false, hasRoad: false, hasLink: false, harvesters: [], otherUsers: []};
     }
-    room.memory.sources = {};
-    for(let source of room.find(FIND_SOURCES)){
-        room.memory.sources[source.id] = {hasContainer: false, hasRoad: false, hasLink: false, harvesters: [], otherUsers: []};
-    }
     for(let role in CreepRoles){
         room.memory.creepRoles[role] = {current: [], max: 0};
     }
+    let runner = new RoomRunner(room);
+    room.memory.sources = {};
+    for(let source of room.find(FIND_SOURCES)){
+        room.memory.sources[source.id] = {hasContainer: false, hasRoad: false, hasLink: false, harvesters: [], otherUsers: []};
+        runner.queue(new RoomJobHarvestSource(runner, {sourceId: source.id}));
+    }
+    runner.queue(new RoomJobPlan(runner, {}));
+    runner.queue(new RoomJobDefense(runner, {}));
+    runner.queue(new RoomJobBuild(runner, {}));
+    runner.queue(new RoomJobRepair(runner, {}));
+    runner.queue(new RoomJobUpgrade(runner, {}));
+    runner.queue(new RoomJobSpawn(runner, {}));
 }
 
 export function buildRoad(room: Room, startPos: RoomPosition, endPos: RoomPosition){
