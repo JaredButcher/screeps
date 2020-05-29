@@ -3052,9 +3052,11 @@ interface RoomMemory extends RunnerJobMemory{
     minerals: {[id: string]: ResourceMemory};
     deposits: {[id: string]: ResourceMemory};
     crashRecovery: boolean;
+    lastLevel: number;
+    corePos: {x: number, y: number, roomName: string};
+    corePlaced: boolean;
     spawnQueue: CreepBodyMemory[];
     spawning: {[id: string]: CreepBodyMemory};
-    linkCamper?: CreepPromiseMemory;
     creepRoles: {[key: string]: {current: CreepPromiseMemory[], max: number}};
 
 }

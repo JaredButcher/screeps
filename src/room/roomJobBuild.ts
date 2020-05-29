@@ -4,6 +4,7 @@ import {RoomJobArgs, RoomJob} from './roomJob';
 import {CreepRunner} from '../creep/creepRunner';
 import {GeneralCreep} from '../creep/creepBody';
 import {CreepTaskBuildAuto} from '../creep/creepTaskBuildAuto';
+import {getConstructionSiteFlags} from './roomUtils';
 
 export class RoomJobBuild extends RoomJob{
     constructor(runner: RoomRunner, args: RoomJobArgs, repeating: boolean = false, promiseId?: string){
@@ -15,9 +16,9 @@ export class RoomJobBuild extends RoomJob{
         //Are we maxed out
         if(room.memory.creepRoles[CreepRoles.BUILD].current.length < room.memory.creepRoles[CreepRoles.BUILD].max){
             //Find structures in need of building
-            let targets = room.find(FIND_CONSTRUCTION_SITES);
+            let targets = room.find(FIND_CONSTRUCTION_SITES).length + getConstructionSiteFlags(room).length;
             //Do we already have a reasonable amount of builders
-            if(targets.length > room.memory.creepRoles[CreepRoles.REPAIR].current.length * 4){
+            if(targets > room.memory.creepRoles[CreepRoles.BUILD].current.length * 4){
                 //Find / spawn creep
                 let creepId = runner.findCreep(CreepTypes.GENERAL, true);
                 if(creepId && !(creepId === true)){
