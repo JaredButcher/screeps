@@ -1,4 +1,4 @@
-import {Runner, PromiseState, Queueable} from './runner';
+import {Runner, Queueable} from './runner';
 
 export class JobRunner extends Runner{
     jobsPerTick: number;

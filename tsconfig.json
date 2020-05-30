@@ -2,12 +2,15 @@
     "compilerOptions": {
         "noImplicitThis": false,
         "strict": true,
+        "target": "es2017",
+        "module": "esnext",
+        "sourceMap": false,
+        "moduleResolution": "Node",
         "skipLibCheck": true,
         "allowUnreachableCode": false,
         "allowUnusedLabels": true,
         "baseUrl": "src/",
-        "outDir": "build/",
-        "module":"commonjs"
+        "outDir": "build"
     },
     "include": [
         "src/**/*"

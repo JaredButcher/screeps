@@ -1,3 +1,5 @@
-import {initMemory} from './utils';
+import {initMemory} from './manageMemory';
 
-global.initMemory = initMemory;
+export function attach() {
+    global.initMemory = initMemory
+}

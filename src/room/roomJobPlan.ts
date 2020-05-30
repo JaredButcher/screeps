@@ -1,8 +1,8 @@
 import {registrare} from '../runner/runner';
 import {RoomRunner} from './roomRunner';
 import {RoomJobArgs, RoomJob} from './roomJob';
-import {fetchPromise, PromiseState} from '../utils';
-import {initRoomMemory, buildRoad} from './roomUtils';
+import {fetchPromise} from '../utils';
+import {buildRoad} from './roomUtils';
 import {isFlagOfType, flagTypes} from 'flags';
 
 export class RoomJobPlan extends RoomJob{
@@ -12,8 +12,6 @@ export class RoomJobPlan extends RoomJob{
     run(){
         let room = <Room>this.runner.actor;
         let crashing: boolean = true;
-        //Insure room is inited
-        if(!room.memory.inited) initRoomMemory(room);
         if(room.controller){
             //Set current plans
             this.planByController(room);

@@ -1,4 +1,4 @@
-import {Queueable, registrare, Runner, PromiseState} from '../runner/runner';
+import {Queueable, registrare, Runner} from '../runner/runner';
 import {CreepRunner} from './creepRunner';
 
 export interface CreepTaskArgs{

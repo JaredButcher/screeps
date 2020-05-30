@@ -1,6 +1,3 @@
-import {PromiseState} from "../utils";
-export {PromiseState};
-
 export interface QueueableConstructor{
     new (...args: any[]): Queueable;
 }

@@ -1,4 +1,4 @@
-import {registrare, PromiseState} from '../runner/runner';
+import {registrare} from '../runner/runner';
 import {CreepRunner} from './creepRunner';
 import {CreepTask, CreepTaskArgs} from './CreepTask';
 

@@ -116,3 +116,6 @@ dist
 .pnp.*
 
 build
+screeps.json
+node_modules
+package-lock.json

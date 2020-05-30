@@ -1,7 +1,7 @@
 import {Queueable, registrare} from '../runner/runner';
 import {RoomRunner} from './roomRunner';
 import {RoomJobArgs, RoomJob} from './roomJob';
-import {fetchPromise, PromiseState} from '../utils';
+import {fetchPromise} from '../utils';
 
 export class RoomJobSpawn extends RoomJob{
     constructor(runner: RoomRunner, args: RoomJobArgs, repeating: boolean = false, promiseId?: string){
