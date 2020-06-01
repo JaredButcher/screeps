@@ -1,10 +1,7 @@
-import {registrare} from '../runner/runner';
-import {CreepRunner} from './creepRunner';
-import {CreepTask, CreepTaskArgs} from './CreepTask';
+import {CreepTask, CreepTaskArgs, CreepManager} from './creepManager';
 import {CreepTaskEmpty, CreepTaskArgsEmpty} from './creepTaskEmpty';
 import {CreepTaskFill, CreepTaskArgsFill, StorageStructure} from './creepTaskFill';
-import {fetchPromise} from '../utils';
-import {PromiseState} from '../enums';
+import {fetchPromise, PromiseState} from '../utils';
 
 export {StorageStructure};
 
@@ -17,8 +14,8 @@ export interface CreepTaskArgsFerry extends CreepTaskArgs{
 }
 
 export class CreepTaskFerry extends CreepTask{
-    constructor(runner: CreepRunner, args: CreepTaskArgsFerry, repeating: boolean = false, promiseId?: string){
-        super(runner, args, repeating, promiseId);
+    constructor(manager: CreepManager, args: CreepTaskArgsFerry, repeating: boolean = false, promiseId?: string, name: string = CreepTaskFerry.name){
+        super(manager, args, repeating, promiseId, name);
     }
     run(): boolean{
         let args = <CreepTaskArgsFerry>this.args;
@@ -27,16 +24,16 @@ export class CreepTaskFerry extends CreepTask{
                 resourceType: args.resourceType,
                 targetIds: args.destinationIds
             }
-            let emptyTask = new CreepTaskEmpty(this.runner, emptyArgs, false);
+            let emptyTask = new CreepTaskEmpty(this.manager, emptyArgs, false);
             args.emptyPromise = emptyTask.promiseId;
-            this.runner.push(emptyTask);
+            this.manager.push(emptyTask);
             let fillArgs: CreepTaskArgsFill = {
                 resourceType: args.resourceType,
                 targetIds: args.sourceIds
             }
-            let fillTask = new CreepTaskFill(this.runner, fillArgs, false);
+            let fillTask = new CreepTaskFill(this.manager, fillArgs, false);
             args.fillPromise = fillTask.promiseId;
-            this.runner.push(fillTask);
+            this.manager.push(fillTask);
             return false;
         }else{
             if(fetchPromise(<string>args.emptyPromise) == PromiseState.SUCESS && fetchPromise(<string>args.fillPromise) == PromiseState.SUCESS){
@@ -48,5 +45,3 @@ export class CreepTaskFerry extends CreepTask{
         }
     }
 }
-
-registrare["CreepTaskFerry"] = CreepTaskFerry;

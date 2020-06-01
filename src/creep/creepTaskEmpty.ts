@@ -1,7 +1,5 @@
-import {registrare} from '../runner/runner';
-import {CreepRunner} from './creepRunner';
-import {CreepTask, CreepTaskArgs} from './CreepTask';
-import {PromiseState} from '../enums';
+import {CreepTask, CreepTaskArgs, CreepManager} from './creepManager';
+import {PromiseState} from '../utils';
 
 export interface CreepTaskArgsEmpty extends CreepTaskArgs{
     targetIds?: Id<AnyStoreStructure>[];
@@ -11,12 +9,12 @@ export interface CreepTaskArgsEmpty extends CreepTaskArgs{
 }
 
 export class CreepTaskEmpty extends CreepTask{
-    constructor(runner: CreepRunner, args: CreepTaskArgsEmpty, repeating: boolean = false, promiseId?: string){
+    constructor(manager: CreepManager, args: CreepTaskArgsEmpty, repeating: boolean = false, promiseId?: string, name: string = CreepTaskEmpty.name){
         args.range = 1;
-        super(runner, args, repeating, promiseId);
+        super(manager, args, repeating, promiseId, name);
     }
     run(): boolean{
-        let creep = <Creep>this.runner.actor;
+        let creep = <Creep>this.manager.actor;
         let args = <CreepTaskArgsEmpty>this.args;
         if(creep.store.getUsedCapacity(args.resourceType) == 0){
             this.end(PromiseState.SUCESS);
@@ -67,5 +65,3 @@ export class CreepTaskEmpty extends CreepTask{
         }
     }
 }
-
-registrare["CreepTaskEmpty"] = CreepTaskEmpty;

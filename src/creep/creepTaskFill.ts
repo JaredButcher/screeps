@@ -1,8 +1,7 @@
-import {registrare} from '../runner/runner';
-import {CreepRunner} from './creepRunner';
-import {CreepTask, CreepTaskArgs} from './CreepTask';
+import {CreepTask, CreepTaskArgs, CreepManager} from './creepManager';
+import {PromiseState} from '../utils';
 import {CreepTaskHarvest, CreepTaskArgsHarvest} from './creepTaskHarvest';
-import {PromiseState} from '../enums';
+
 
 export interface CreepTaskArgsFill extends CreepTaskArgs{
     targetIds?: Id<StorageStructure>[];
@@ -15,12 +14,12 @@ export interface CreepTaskArgsFill extends CreepTaskArgs{
 export type StorageStructure = Structure<STRUCTURE_CONTAINER> | Structure<STRUCTURE_STORAGE>;
 
 export class CreepTaskFill extends CreepTask{
-    constructor(runner: CreepRunner, args: CreepTaskArgsFill, repeating: boolean = false, promiseId?: string){
+    constructor(manager: CreepManager, args: CreepTaskArgsFill, repeating: boolean = false, promiseId?: string, name: string = CreepTaskFill.name){
         args.range = 1;
-        super(runner, args, repeating, promiseId);
+        super(manager, args, repeating, promiseId, name);
     }
     run(): boolean{
-        let creep = <Creep>this.runner.actor;
+        let creep = <Creep>this.manager.actor;
         let args = <CreepTaskArgsFill>this.args;
         if((args.amount && creep.store.getUsedCapacity(args.resourceType) >= args.amount) || creep.store.getFreeCapacity(args.resourceType) == 0){
             this.end(PromiseState.SUCESS);
@@ -39,9 +38,9 @@ export class CreepTaskFill extends CreepTask{
                         resourceType: RESOURCE_ENERGY,
                         targetId: sources[0].id
                     };
-                    let harvestTask = new CreepTaskHarvest(this.runner, harvestArgs)
+                    let harvestTask = new CreepTaskHarvest(this.manager, harvestArgs)
                     sourceMem[sources[0].id].otherUsers.push({creep: creep.id, promise: harvestTask.promiseId})
-                    this.runner.push(harvestTask);
+                    this.manager.push(harvestTask);
                     return false;
                 }else{
                     return false;
@@ -83,5 +82,3 @@ export class CreepTaskFill extends CreepTask{
         }
     }
 }
-
-registrare["CreepTaskFill"] = CreepTaskFill;

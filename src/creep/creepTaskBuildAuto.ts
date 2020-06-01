@@ -1,24 +1,22 @@
-import {registrare} from '../runner/runner';
-import {CreepRunner} from './creepRunner';
-import {CreepTask, CreepTaskArgs} from './CreepTask';
+import {CreepTask, CreepTaskArgs, CreepManager} from './creepManager';
+import {PromiseState} from '../utils';
 import {CreepTaskFill} from './creepTaskFill';
 import {getConstructionSiteFlags, activateConstructionSite} from '../room/roomUtils'
-import {PromiseState} from '../enums';
 
-export interface CreepTaskBuildAutoArgs extends CreepTaskArgs{
+export interface CreepTaskArgsBuildAuto extends CreepTaskArgs{
     targetId?: Id<ConstructionSite>;
 }
 
 export class CreepTaskBuildAuto extends CreepTask{
-    constructor(runner: CreepRunner, args: CreepTaskBuildAutoArgs, repeating: boolean = false, promiseId?: string){
-        super(runner, args, repeating, promiseId);
+    constructor(manager: CreepManager, args: CreepTaskArgsBuildAuto, repeating: boolean = false, promiseId?: string, name: string = CreepTaskBuildAuto.name){
+        super(manager, args, repeating, promiseId, name);
     }
     run(): boolean{
-        let creep = <Creep>this.runner.actor;
-        let runner = <CreepRunner>this.runner;
-        let args = <CreepTaskBuildAutoArgs>this.args;
+        let creep = <Creep>this.manager.actor;
+        let manager = <CreepManager>this.manager;
+        let args = <CreepTaskArgsBuildAuto>this.args;
         if(creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0){
-            runner.push(new CreepTaskFill(runner, {resourceType: RESOURCE_ENERGY}));
+            manager.push(new CreepTaskFill(manager, {resourceType: RESOURCE_ENERGY}));
             return false;
         }
         //Make sure it is still a construction site to save a tick
@@ -50,5 +48,3 @@ export class CreepTaskBuildAuto extends CreepTask{
         return false;
     }
 }
-
-registrare["CreepTaskBuildAuto"] = CreepTaskBuildAuto;

@@ -1,8 +1,6 @@
-import {registrare} from '../runner/runner';
-import {CreepRunner} from './creepRunner';
-import {CreepTask, CreepTaskArgs} from './CreepTask';
+import {CreepTask, CreepTaskArgs, CreepManager} from './creepManager';
+import {PromiseState} from '../utils';
 import {CreepTaskFill} from './creepTaskFill';
-import {PromiseState} from '../enums';
 
 export interface CreepTaskArgsRepairAuto extends CreepTaskArgs{
     targetId?: Id<Structure>;
@@ -10,15 +8,15 @@ export interface CreepTaskArgsRepairAuto extends CreepTaskArgs{
 }
 
 export class CreepTaskRepairAuto extends CreepTask{
-    constructor(runner: CreepRunner, args: CreepTaskArgsRepairAuto, repeating: boolean = false, promiseId?: string){
-        super(runner, args, repeating, promiseId);
+    constructor(manager: CreepManager, args: CreepTaskArgsRepairAuto, repeating: boolean = false, promiseId?: string, name: string = CreepTaskRepairAuto.name){
+        super(manager, args, repeating, promiseId);
     }
     run(): boolean{
-        let creep = <Creep>this.runner.actor;
-        let runner = <CreepRunner>this.runner;
+        let creep = <Creep>this.manager.actor;
+        let manager = <CreepManager>this.manager;
         let args = <CreepTaskArgsRepairAuto>this.args;
         if(creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0){
-            runner.push(new CreepTaskFill(runner, {resourceType: RESOURCE_ENERGY}));
+            manager.push(new CreepTaskFill(manager, {resourceType: RESOURCE_ENERGY}));
             return false;
         }
         if(!args.targetId){
@@ -51,5 +49,3 @@ export class CreepTaskRepairAuto extends CreepTask{
         return false;
     }
 }
-
-registrare["CreepTaskRepairAuto"] = CreepTaskRepairAuto;

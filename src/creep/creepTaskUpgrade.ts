@@ -1,24 +1,22 @@
-import {registrare} from '../runner/runner';
-import {CreepRunner} from './creepRunner';
-import {CreepTask, CreepTaskArgs} from './CreepTask';
-import {PromiseState} from '../enums';
+import {CreepTask, CreepTaskArgs, CreepManager} from './creepManager';
+import {PromiseState} from '../utils';
 
 export interface CreepTaskArgsUpgrade extends CreepTaskArgs{
     targetId: Id<StructureController>;
 }
 
 export class CreepTaskUpgrade extends CreepTask{
-    constructor(runner: CreepRunner, args: CreepTaskArgsUpgrade, repeating: boolean = false, promiseId?: string){
+    constructor(manager: CreepManager, args: CreepTaskArgsUpgrade, repeating: boolean = false, promiseId?: string, name: string = CreepTaskUpgrade.name){
         let target: StructureController = <StructureController>Game.getObjectById(args.targetId);
         args.x = target.pos.x;
         args.y = target.pos.y;
         args.roomName = target.pos.roomName;
         args.range = 3;
-        super(runner, args, repeating, promiseId);
+        super(manager, args, repeating, promiseId, name);
     }
     run(): boolean{
         if(super.run()){
-            let creep = <Creep>this.runner.actor;
+            let creep = <Creep>this.manager.actor;
             let args = <CreepTaskArgsUpgrade>this.args;
             let target: StructureController = <StructureController>Game.getObjectById(args.targetId);
             let status: ScreepsReturnCode = creep.upgradeController(target);
@@ -35,5 +33,3 @@ export class CreepTaskUpgrade extends CreepTask{
         return false;
     }
 }
-
-registrare["CreepTaskUpgrade"] = CreepTaskUpgrade;
