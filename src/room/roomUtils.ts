@@ -1,5 +1,13 @@
 import {isFlagOfType, flagTypes} from '../flags';
 
+export enum CreepRoles{
+    HARVEST = "HARVEST", 
+    REPAIR = "REPAIR", 
+    UPGRADE = "UPGRADE", 
+    TRANSPORT = "TRANSPORT", 
+    BUILD = "BUILD"
+}
+
 export function getConstructionSiteFlags(room: Room){
     return room.find(FIND_FLAGS, {filter: x => isFlagOfType(x, 'constructionSite')});
 }

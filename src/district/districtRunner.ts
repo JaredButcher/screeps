@@ -1,8 +1,7 @@
-import {JobRunner} from '../runner/jobRunner';
+import {Runner} from '../runner/runner';
 
-export class DistrictRunner extends JobRunner{
-    constructor(memory: RunnerJobMemory){
+export class DistrictRunner extends Runner{
+    constructor(memory: TaskManagerMemory){
         super({}, memory);
-        this.run();
     }
 }

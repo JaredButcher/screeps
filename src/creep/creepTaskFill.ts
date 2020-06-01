@@ -2,6 +2,7 @@ import {registrare} from '../runner/runner';
 import {CreepRunner} from './creepRunner';
 import {CreepTask, CreepTaskArgs} from './CreepTask';
 import {CreepTaskHarvest, CreepTaskArgsHarvest} from './creepTaskHarvest';
+import {PromiseState} from '../enums';
 
 export interface CreepTaskArgsFill extends CreepTaskArgs{
     targetIds?: Id<StorageStructure>[];

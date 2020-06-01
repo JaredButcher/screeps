@@ -6,6 +6,7 @@ import {CreepTaskEmpty} from '../creep/creepTaskEmpty';
 import {CreepTaskMoveTo} from '../creep/creepTaskMoveTo';
 import {CreepTaskHarvest, DropTarget} from '../creep/creepTaskHarvest';
 import {HarvestCreep, GeneralCreep} from 'creep/creepBody';
+import {CreepTypes} from '../enums';
 
 export interface RoomJobHarvestSourceArgs extends RoomJobArgs{
     sourceId: Id<Source>;

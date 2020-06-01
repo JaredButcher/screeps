@@ -5,6 +5,7 @@ import {CreepRunner} from '../creep/creepRunner';
 import {GeneralCreep} from '../creep/creepBody';
 import {CreepTaskBuildAuto} from '../creep/creepTaskBuildAuto';
 import {getConstructionSiteFlags} from './roomUtils';
+import {CreepTypes, CreepRoles} from '../enums';
 
 export class RoomJobBuild extends RoomJob{
     constructor(runner: RoomRunner, args: RoomJobArgs, repeating: boolean = false, promiseId?: string){

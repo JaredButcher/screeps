@@ -3,6 +3,7 @@ import {CreepRunner} from './creepRunner';
 import {CreepTask, CreepTaskArgs} from './CreepTask';
 import {CreepTaskFill} from './creepTaskFill';
 import {getConstructionSiteFlags, activateConstructionSite} from '../room/roomUtils'
+import {PromiseState} from '../enums';
 
 export interface CreepTaskBuildAutoArgs extends CreepTaskArgs{
     targetId?: Id<ConstructionSite>;

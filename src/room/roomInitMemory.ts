@@ -3,36 +3,46 @@ import {RoomJobHarvestSource} from './roomJobHarvestSource';
 import {RoomJobDefense} from './roomJobDefense';
 import {RoomJobBuild} from './roomJobBuild';
 import {RoomJobRepair} from './roomJobRepair';
-import {RoomJobUpgrade} from './roomJobUpgrade';
+import {RoomJobUpgrade} from './roomTaskUpgrade';
 import {RoomJobSpawn} from './roomJobSpawn';
 import {RoomJobPlan} from './roomJobPlan';
+import {CreepRoles} from './roomUtils';
 
 export function initRoomMemory(room: Room) {
-    room.memory.inited = true;
-    room.memory.crashRecovery = false;
-    room.memory.lastLevel = 0;
-    room.memory.corePlaced = false;
-    room.memory.defcon = 0;
-    if(room.controller){
-        room.memory.corePos = room.controller.pos
-    }else{
-        room.memory.corePos = {x: 0, y: 0, roomName: room.name};
+    let roomMem: RoomMemory = {
+        inited: true,
+        crashRecovery: false,
+        lastLevel: 0,
+        corePlaced: false,
+        defcon: 0,
+        spawnQueue: [],
+        spawning: {},
+        deposits: {},
+        aPriority: [],
+        aQueue: [],
+        aPromises: [],
+        creepRoles: {},
+        minerals:{},
+        corePos: {x: 0, y: 0, roomName: room.name},
+        sources: {}
     }
-    room.memory.spawnQueue = [];
-    room.memory.spawning = {};
-    room.memory.deposits = {};
+    room.memory = roomMem;
+    
+    if(room.controller){
+        room.memory.corePos = {x: room.controller.pos.x, y: room.controller.pos.y, roomName: room.name};
+    }
     for(let deposit of room.find(FIND_DEPOSITS)){
         room.memory.deposits[deposit.id] = {hasContainer: false, hasRoad: false, hasLink: false, harvesters: [], otherUsers: []};
     }
-    room.memory.minerals = {};
+    
     for(let mineral of room.find(FIND_MINERALS)){
         room.memory.minerals[mineral.id] = {hasContainer: false, hasRoad: false, hasLink: false, harvesters: [], otherUsers: []};
     }
     for(let role in CreepRoles){
         room.memory.creepRoles[role] = {current: [], max: 0};
     }
+    
     let runner = new RoomRunner(room);
-    room.memory.sources = {};
     for(let source of room.find(FIND_SOURCES)){
         room.memory.sources[source.id] = {hasContainer: false, hasRoad: false, hasLink: false, harvesters: [], otherUsers: []};
         runner.queue(new RoomJobHarvestSource(runner, {sourceId: source.id}));

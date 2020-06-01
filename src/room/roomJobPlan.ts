@@ -4,6 +4,7 @@ import {RoomJobArgs, RoomJob} from './roomJob';
 import {fetchPromise} from '../utils';
 import {buildRoad} from './roomUtils';
 import {isFlagOfType, flagTypes} from 'flags';
+import {PromiseState, CreepRoles} from '../enums';
 
 export class RoomJobPlan extends RoomJob{
     constructor(runner: RoomRunner, args: RoomJobArgs, repeating: boolean = false, promiseId?: string){

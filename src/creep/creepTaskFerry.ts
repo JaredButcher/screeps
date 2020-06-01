@@ -4,6 +4,7 @@ import {CreepTask, CreepTaskArgs} from './CreepTask';
 import {CreepTaskEmpty, CreepTaskArgsEmpty} from './creepTaskEmpty';
 import {CreepTaskFill, CreepTaskArgsFill, StorageStructure} from './creepTaskFill';
 import {fetchPromise} from '../utils';
+import {PromiseState} from '../enums';
 
 export {StorageStructure};
 

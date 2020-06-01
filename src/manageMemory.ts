@@ -1,10 +1,14 @@
 import {initDistrictMemory} from './district/districtUtils';
 import {initRoomMemory} from './room/roomInitMemory';
 import {PROMISE_LIFE} from './utils';
+import {CreepTypes} from './creep/creepUtils';
+import {CreepRoles} from './room/roomUtils';
+import {PromiseState} from './utils';
 
 export function initMemory(){
     console.log("Initalizeing memory")
     Memory.inited = true;
+    Memory.pause = false;
     Memory.promises = {};
     Memory.promiseCount = Math.floor(Math.random() * 100000);
     Memory.districts = {};
@@ -20,6 +24,7 @@ export function initMemory(){
         creep.memory.inited = true;
         creep.memory.aPromises = [];
         creep.memory.aQueue = [];
+        creep.memory.aPromises = [];
         if(WORK in creep.body){
             creep.memory.bodyType = CreepTypes.GENERAL;
         }else if(CLAIM in creep.body){
@@ -41,10 +46,16 @@ export function cleanMemory(){
     let creepsToRemove: string[] = [];
     for(let creepId in Memory.creeps){
         if(!Game.getObjectById(creepId)){
-            for(let promiseId of Memory.creeps[creepId].aPromises){
-                if(Memory.promises[promiseId].status == PromiseState.RUNNING){
-                    Memory.promises[promiseId].status = PromiseState.ERR_DEAD;
-                    Memory.promises[promiseId].age = Game.time;
+            for(let task of Memory.creeps[creepId].aQueue){
+                if(Memory.promises[task.promiseId].status == PromiseState.RUNNING){
+                    Memory.promises[task.promiseId].status = PromiseState.ERR_DEAD;
+                    Memory.promises[task.promiseId].age = Game.time;
+                }
+            }
+            for(let task of Memory.creeps[creepId].aPriority){
+                if(Memory.promises[task.promiseId].status == PromiseState.RUNNING){
+                    Memory.promises[task.promiseId].status = PromiseState.ERR_DEAD;
+                    Memory.promises[task.promiseId].age = Game.time;
                 }
             }
             creepsToRemove.push(creepId);
@@ -57,7 +68,7 @@ export function cleanMemory(){
     //Find old tasks
     let promisesToRemvoe: string[] = [];
     for(let promiseId in Memory.promises){
-        if(Memory.promises[promiseId].age > PROMISE_LIFE){
+        if(Memory.promises[promiseId].age != 0 && Game.time - Memory.promises[promiseId].age > PROMISE_LIFE){
             promisesToRemvoe.push(promiseId);
         }
     }

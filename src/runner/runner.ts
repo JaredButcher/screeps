@@ -1,71 +1,34 @@
-export interface QueueableConstructor{
-    new (...args: any[]): Queueable;
-}
-
-export let registrare: {[name: string]: QueueableConstructor} = {};
-
-export class Queueable{
-    promiseId: string;
-    repeating: boolean;
-    args: object;
-    name: string = "Queueable";
-    runner: Runner;
-    constructor(runner: Runner, args: object, repeating: boolean = false, promiseId?: string){
-        this.repeating = repeating;
-        this.args = args;
-        this.runner = runner;
-        if(promiseId === undefined){
-            this.promiseId = Memory.promiseCount.toString();
-            Memory.promiseCount = (Memory.promiseCount + 1) % 1000000000;
-        }else{
-            this.promiseId = promiseId;
-        }
-    }
-    run(): boolean{
-        this.end(PromiseState.SUCESS);
-        return true;
-    }
-    start(){
-        Memory.promises[this.promiseId] = {status: PromiseState.RUNNING, age: 0};
-    }
-    end(status: PromiseState, force = false){
-        if(force || !this.repeating){
-            Memory.promises[this.promiseId] = {status: status, age: Game.time};
-        }
-    }
-}
-
-registrare["Queueable"] = Queueable;
+import {Manager, Task} from './manager';
 
 export class Runner{
-    memory: RunnerMemory;
+    memory: ManagerMemory;
     actor: object;
-    constructor(actor: object, memory: RunnerMemory){
+    manager: Manager;
+    constructor(actor: object, memory: ManagerMemory){
         this.actor = actor;
         this.memory = memory;
+        this.manager = new Manager(actor, memory);
     }
-    run(){}
-    queue(action: Queueable){
-        action.start();
-        this.memory.aQueue.push(action);
-        this.memory.aPromises.push(action.promiseId);
-    }
-    push(action: Queueable){
-        action.start();
-        this.memory.aQueue.unshift(action);
-        this.memory.aPromises.push(action.promiseId);
-    }
-    clearQueue(){
-        for(let action of this.memory.aQueue){
-            this.parseAction(action).end(PromiseState.ERR_PREEMPTED, true);
+    run(){
+        if(this.memory.aQueue.length > 0){
+            let aCurrentAction: Task | null = this.getAction(this.memory.aQueue[0]);
+            if(aCurrentAction && aCurrentAction.run()){
+                if(aCurrentAction.repeating){
+                    this.manager.queue(aCurrentAction);
+                }
+                this.manager.shift();
+            }
         }
-        this.memory.aQueue = [];
+        let pJobsToKeep: Task[] = [];
+        for(let pJob of this.memory.aPriority){
+            let currentAction: Task | null = this.getAction(pJob);
+            if(currentAction && (currentAction.run() || currentAction.repeating)){
+                pJobsToKeep.push(currentAction);
+            }
+        }
+        this.memory.aPriority = pJobsToKeep;
     }
-    parseAction(action: Queueable): Queueable{
-        return new registrare[action.name](this, action.args, action.repeating, action.promiseId);
-    }
-    protected next(){
-        this.memory.aQueue.shift();
+    getAction(action: TaskMemory): Task | null{
+        return new Task(this.manager, action.args, action.repeating, action.promiseId);
     }
 }
-

@@ -1,6 +1,7 @@
 import {registrare} from '../runner/runner';
 import {CreepRunner} from './creepRunner';
 import {CreepTask} from './CreepTask';
+import {PromiseState} from '../enums';
 
 export class CreepTaskMoveTo extends CreepTask{
     run(): boolean{

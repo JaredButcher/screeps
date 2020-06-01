@@ -1,3 +1,5 @@
+import {CreepTypes} from '../enums';
+
 
 export class CreepBody{
     body: BodyPartConstant[];

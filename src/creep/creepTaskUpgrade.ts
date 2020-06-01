@@ -1,6 +1,7 @@
 import {registrare} from '../runner/runner';
 import {CreepRunner} from './creepRunner';
 import {CreepTask, CreepTaskArgs} from './CreepTask';
+import {PromiseState} from '../enums';
 
 export interface CreepTaskArgsUpgrade extends CreepTaskArgs{
     targetId: Id<StructureController>;

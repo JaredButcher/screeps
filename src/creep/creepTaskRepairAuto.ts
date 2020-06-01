@@ -2,6 +2,7 @@ import {registrare} from '../runner/runner';
 import {CreepRunner} from './creepRunner';
 import {CreepTask, CreepTaskArgs} from './CreepTask';
 import {CreepTaskFill} from './creepTaskFill';
+import {PromiseState} from '../enums';
 
 export interface CreepTaskArgsRepairAuto extends CreepTaskArgs{
     targetId?: Id<Structure>;
