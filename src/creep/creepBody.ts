@@ -1,4 +1,4 @@
-import {CreepTypes} from '../enums';
+import {CreepTypes} from './creepUtils';
 
 
 export class CreepBody{
