@@ -6,9 +6,8 @@ import {CreepTypes} from '../creep/creepUtils';
 import {CreepRoles} from './roomUtils';
 
 export class RoomTaskUpgrade extends RoomTask{
-    constructor(manager: RoomManager, args: RoomTaskArgs, repeating: boolean = false, promiseId?: string){
-        super(manager, args, repeating, promiseId);
-        this.name = "RoomTaskUpgrade";
+    constructor(manager: RoomManager, args: RoomTaskArgs, repeating: boolean = false, promiseId?: string, name: string = RoomTaskUpgrade.name){
+        super(manager, args, repeating, promiseId, name);
     }
     run(){
         let room = <Room>this.manager.actor;
@@ -18,7 +17,7 @@ export class RoomTaskUpgrade extends RoomTask{
             let creepId = manager.findCreep(CreepTypes.GENERAL, true);
             if(creepId && !(creepId === true)){
                 let creep = <Creep>Game.getObjectById(creepId);
-                let creepManager = new CreepManager(creep);
+                let creepManager = new CreepManager(creep, creep.memory);
                 creepManager.clearQueue();
                 let upgradeTask = new CreepTaskUpgrade(creepManager, {targetId: (<StructureController>room.controller).id});
                 creepManager.queue(upgradeTask);
@@ -27,7 +26,7 @@ export class RoomTaskUpgrade extends RoomTask{
                 manager.queueSpawn(new GeneralCreep(manager.maxCreepCost()));
             }
         }
-        return false;
+        return true;
     }
     
 }

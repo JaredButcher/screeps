@@ -29,7 +29,7 @@ export class CreepTask extends Task{
 }
 
 export class CreepManager extends Manager{
-    constructor(actor: Room, memory: ManagerMemory){
+    constructor(actor: Creep, memory: ManagerMemory){
         super(actor, memory);
     }
     queue(action: CreepTask){
