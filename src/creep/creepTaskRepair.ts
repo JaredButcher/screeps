@@ -13,9 +13,9 @@ export class CreepTaskRepair extends CreepTask{
         args.y = target.pos.y;
         args.roomName = target.pos.roomName;
         args.range = 3;
-        super(manager, args, repeating, promiseId);
+        super(manager, args, name, repeating, promiseId);
     }
-    run(): boolean{
+    run(): [boolean, boolean]{
         if(super.run()){
             let creep = <Creep>this.manager.actor;
             let args = <CreepTaskArgsRepair>this.args;
@@ -23,20 +23,20 @@ export class CreepTaskRepair extends CreepTask{
             let status: ScreepsReturnCode = creep.repair(target);
             if(status == ERR_NOT_ENOUGH_RESOURCES){
                 this.end(PromiseState.ERR_LACK_RESOURCE);
-                return true;
+                return [true, false];
             }
             if(status == OK){
                 if(target.hits == target.hitsMax ||
                     (args.untilHits && target.hits >= args.untilHits)){
                     this.end(PromiseState.SUCESS);
-                    return true;
+                    return [true, false];
                 }else{
-                    return false;
+                    return [false, false];
                 }
             }
             this.end(PromiseState.ERR_MISC_ERROR);
-            return true;
+            return [true, false];
         }
-        return false;
+        return [false, false];
     }
 }

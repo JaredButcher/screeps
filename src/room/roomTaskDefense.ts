@@ -1,25 +1,18 @@
-import {registrare} from '../runner/runner';
-import {RoomRunner} from './roomRunner';
-import {RoomJobArgs, RoomJob} from './roomJob';
-import {CreepRunner} from '../creep/creepRunner';
-import {GeneralCreep} from '../creep/creepBody';
-import {CreepTaskBuildAuto} from '../creep/creepTaskBuildAuto';
-import {getConstructionSiteFlags} from './roomUtils';
+import {RoomTask, RoomManager, RoomTaskArgs} from './roomManager';
 
-export class RoomJobDefense extends RoomJob{
-    constructor(runner: RoomRunner, args: RoomJobArgs, repeating: boolean = false, promiseId?: string){
-        super(runner, args, repeating, promiseId);
+export class RoomTaskDefense extends RoomTask{
+    constructor(manager: RoomManager, args: RoomTaskArgs, repeating: boolean = false, promiseId?: string, name: string = RoomTaskDefense.name){
+        super(manager, args, name, repeating, promiseId);
     }
-    run(){
-        let room = <Room>this.runner.actor;
-        let runner = <RoomRunner>this.runner;
+    run(): [boolean, boolean]{
+        let room = <Room>this.manager.actor;
+        let manager = <RoomManager>this.manager;
         let hostiles = room.find(FIND_HOSTILE_CREEPS);
         if(hostiles){
             //Move to priority queue if defcon rises above 0
             if(room.memory.defcon == 0){
                 room.memory.defcon = 1;
-                runner.queuePriority(this)
-                return true;
+                return [true, true];
             }
             //Choose target hostile
             let target: [Creep, number] | null = null;
@@ -63,13 +56,10 @@ export class RoomJobDefense extends RoomJob{
             //If defcon returns to 0, move to normal queue
             if(room.memory.defcon > 0){
                 room.memory.defcon = 0;
-                runner.queue(this)
-                return true;
+                return [true, true];
             }    
         }    
-        return false;
+        return [true, false];
     }
     
 }
-
-registrare["RoomJobDefense"] = RoomJobDefense;

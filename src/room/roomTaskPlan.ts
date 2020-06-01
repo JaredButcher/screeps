@@ -1,17 +1,15 @@
-import {registrare} from '../runner/runner';
-import {RoomRunner} from './roomRunner';
-import {RoomJobArgs, RoomJob} from './roomJob';
+import {RoomTask, RoomManager, RoomTaskArgs} from './roomManager';
 import {fetchPromise} from '../utils';
-import {buildRoad} from './roomUtils';
 import {isFlagOfType, flagTypes} from 'flags';
-import {PromiseState, CreepRoles} from '../enums';
+import {PromiseState} from '../utils';
+import {CreepRoles} from './roomUtils';
 
-export class RoomJobPlan extends RoomJob{
-    constructor(runner: RoomRunner, args: RoomJobArgs, repeating: boolean = false, promiseId?: string){
-        super(runner, args, repeating, promiseId);
+export class RoomTaskPlan extends RoomTask{
+    constructor(manager: RoomManager, args: RoomTaskArgs, repeating: boolean = false, promiseId?: string, name: string = RoomTaskPlan.name){
+        super(manager, args, name, repeating, promiseId);
     }
-    run(){
-        let room = <Room>this.runner.actor;
+    run(): [boolean, boolean]{
+        let room = <Room>this.manager.actor;
         let crashing: boolean = true;
         if(room.controller){
             //Set current plans
@@ -56,17 +54,18 @@ export class RoomJobPlan extends RoomJob{
             }
         }
         //Build structures
-        return false;
+        return [true, false];
     }
     planByController(room: Room){
         let levelChange = room.memory.lastLevel != (<StructureController>room.controller).level;
+        let roomManager = new RoomManager(room);
         if(levelChange){
             room.memory.lastLevel = (<StructureController>room.controller).level;
             if(room.memory.lastLevel >= 2 && room.memory.corePlaced){
                 for(let sourceId in room.memory.sources){
                     let source = <Source>Game.getObjectById(sourceId);
                     if(!room.memory.sources[sourceId].hasRoad){
-                        buildRoad(room, <RoomPosition>room.getPositionAt(room.memory.corePos.x, room.memory.corePos.y), source.pos);
+                        roomManager.buildRoad(<RoomPosition>room.getPositionAt(room.memory.corePos.x, room.memory.corePos.y), source.pos);
                         room.memory.sources[sourceId].hasRoad = true;
                     }
                     //If doesn't have a link or container, build container
@@ -176,5 +175,3 @@ export class RoomJobPlan extends RoomJob{
         }
     }
 }
-
-registrare["RoomJobPlan"] = RoomJobPlan;

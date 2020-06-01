@@ -16,8 +16,6 @@ export class CreepRunner extends Runner{
     }
     getAction(taskMemory: TaskMemory): CreepTask | null{
         switch(taskMemory.name){
-            case CreepTask.name:
-                return new CreepTask(this.manager, taskMemory.args, taskMemory.repeating, taskMemory.promiseId);
             case CreepTaskMoveTo.name:
                 return new CreepTaskMoveTo(this.manager, taskMemory.args, taskMemory.repeating, taskMemory.promiseId);
             case CreepTaskEmpty.name:

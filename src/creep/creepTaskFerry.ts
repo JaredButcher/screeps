@@ -15,33 +15,33 @@ export interface CreepTaskArgsFerry extends CreepTaskArgs{
 
 export class CreepTaskFerry extends CreepTask{
     constructor(manager: CreepManager, args: CreepTaskArgsFerry, repeating: boolean = false, promiseId?: string, name: string = CreepTaskFerry.name){
-        super(manager, args, repeating, promiseId, name);
+        super(manager, args, name, repeating, promiseId);
     }
-    run(): boolean{
+    run(): [boolean, boolean]{
         let args = <CreepTaskArgsFerry>this.args;
         if(!args.fillPromise && !args.emptyPromise){
             let emptyArgs: CreepTaskArgsEmpty = {
                 resourceType: args.resourceType,
                 targetIds: args.destinationIds
             }
-            let emptyTask = new CreepTaskEmpty(this.manager, emptyArgs, false);
+            let emptyTask = new CreepTaskEmpty(this.manager, emptyArgs);
             args.emptyPromise = emptyTask.promiseId;
             this.manager.push(emptyTask);
             let fillArgs: CreepTaskArgsFill = {
                 resourceType: args.resourceType,
                 targetIds: args.sourceIds
             }
-            let fillTask = new CreepTaskFill(this.manager, fillArgs, false);
+            let fillTask = new CreepTaskFill(this.manager, fillArgs);
             args.fillPromise = fillTask.promiseId;
             this.manager.push(fillTask);
-            return false;
+            return [false, false];
         }else{
             if(fetchPromise(<string>args.emptyPromise) == PromiseState.SUCESS && fetchPromise(<string>args.fillPromise) == PromiseState.SUCESS){
                 this.end(PromiseState.SUCESS);
             }else{
                 this.end(PromiseState.ERR_MISC_ERROR);
             }
-            return true;
+            return [true, false];
         }
     }
 }

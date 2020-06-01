@@ -1,14 +1,11 @@
-import {Queueable, registrare} from '../runner/runner';
-import {RoomRunner} from './roomRunner';
-import {RoomJobArgs, RoomJob} from './roomJob';
-import {fetchPromise} from '../utils';
+import {RoomTask, RoomManager, RoomTaskArgs} from './roomManager';
 
-export class RoomJobSpawn extends RoomJob{
-    constructor(runner: RoomRunner, args: RoomJobArgs, repeating: boolean = false, promiseId?: string){
-        super(runner, args, repeating, promiseId);
+export class RoomTaskSpawn extends RoomTask{
+    constructor(manager: RoomManager, args: RoomTaskArgs, repeating: boolean = false, promiseId?: string, name: string = RoomTaskSpawn.name){
+        super(manager, args, name, repeating, promiseId);
     }
-    run(){
-        let room = <Room>this.runner.actor;
+    run(): [boolean, boolean]{
+        let room = <Room>this.manager.actor;
         let spawnQueue = room.memory.spawnQueue;
         //Remove creeps that have finished spawning
         let spawnsToRemove: Id<STRUCTURE_SPAWN>[] = [];
@@ -30,7 +27,8 @@ export class RoomJobSpawn extends RoomJob{
                         bodyType: spawnQueue[0].bodyType, 
                         inited: true,
                         aQueue: [],
-                        aPromises: []
+                        aPromises: [],
+                        aPriority: []
                     }});
                     ++Memory.creepCount;
                     room.memory.spawning[spawns[0].id] = spawnQueue[0];
@@ -38,8 +36,6 @@ export class RoomJobSpawn extends RoomJob{
                 }
             }
         }
-        return false;
+        return [true, false];
     }
 }
-
-registrare["RoomJobSpawn"] = RoomJobSpawn;

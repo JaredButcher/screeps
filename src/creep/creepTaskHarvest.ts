@@ -19,9 +19,9 @@ export class CreepTaskHarvest extends CreepTask{
         args.y = target.pos.y;
         args.roomName = target.pos.roomName;
         args.range = 1;
-        super(manager, args, repeating, promiseId, name);
+        super(manager, args, name, repeating, promiseId);
     }
-    run(): boolean{
+    run(): [boolean, boolean]{
         if(super.run()){
             let creep = <Creep>this.manager.actor;
             let args = <CreepTaskArgsHarvest>this.args;
@@ -31,18 +31,18 @@ export class CreepTaskHarvest extends CreepTask{
                 creep.transfer(target, args.resourceType);
             }else if(creep.store.getFreeCapacity(args.resourceType) == 0){
                 this.end(PromiseState.SUCESS);
-                return true;
+                return [true, false];
             }
             if((status == ERR_NOT_ENOUGH_RESOURCES || status == ERR_TIRED) && args.untilSourceEmpty ||
                 args.untilAmount && creep.store.getFreeCapacity(args.resourceType) >= args.untilAmount){
                 this.end(PromiseState.SUCESS);
-                return true;
+                return [true, false];
             }
             if(status != OK && status != ERR_NOT_ENOUGH_RESOURCES && status != ERR_TIRED){
                 this.end(PromiseState.ERR_MISC_ERROR);
-                return true;
+                return [true, false];
             }
         }
-        return false;
+        return [false, false];
     }
 }

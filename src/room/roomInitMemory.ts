@@ -1,11 +1,11 @@
-import {RoomRunner} from './roomRunner';
-import {RoomJobHarvestSource} from './roomJobHarvestSource';
-import {RoomJobDefense} from './roomJobDefense';
-import {RoomJobBuild} from './roomJobBuild';
-import {RoomJobRepair} from './roomJobRepair';
-import {RoomJobUpgrade} from './roomTaskUpgrade';
-import {RoomJobSpawn} from './roomJobSpawn';
-import {RoomJobPlan} from './roomJobPlan';
+import {RoomManager} from './roomManager';
+import {RoomTaskHarvestSource} from './roomTaskHarvestSource';
+import {RoomTaskDefense} from './roomTaskDefense';
+import {RoomTaskBuild} from './roomTaskBuild';
+import {RoomTaskRepair} from './roomTaskRepair';
+import {RoomTaskUpgrade} from './roomTaskUpgrade';
+import {RoomTaskSpawn} from './roomTaskSpawn';
+import {RoomTaskPlan} from './roomTaskPlan';
 import {CreepRoles} from './roomUtils';
 
 export function initRoomMemory(room: Room) {
@@ -42,15 +42,15 @@ export function initRoomMemory(room: Room) {
         room.memory.creepRoles[role] = {current: [], max: 0};
     }
     
-    let runner = new RoomRunner(room);
+    let roomManager = new RoomManager(room);
     for(let source of room.find(FIND_SOURCES)){
         room.memory.sources[source.id] = {hasContainer: false, hasRoad: false, hasLink: false, harvesters: [], otherUsers: []};
-        runner.queue(new RoomJobHarvestSource(runner, {sourceId: source.id}));
+        roomManager.queue(new RoomTaskHarvestSource(roomManager, {sourceId: source.id}));
     }
-    runner.queue(new RoomJobPlan(runner, {}));
-    runner.queue(new RoomJobDefense(runner, {}));
-    runner.queue(new RoomJobBuild(runner, {}));
-    runner.queue(new RoomJobRepair(runner, {}));
-    runner.queue(new RoomJobUpgrade(runner, {}));
-    runner.queue(new RoomJobSpawn(runner, {}));
+    roomManager.queue(new RoomTaskPlan(roomManager, {}));
+    roomManager.queue(new RoomTaskDefense(roomManager, {}));
+    roomManager.queue(new RoomTaskBuild(roomManager, {}));
+    roomManager.queue(new RoomTaskRepair(roomManager, {}));
+    roomManager.queue(new RoomTaskUpgrade(roomManager, {}));
+    roomManager.queue(new RoomTaskSpawn(roomManager, {}));
 }

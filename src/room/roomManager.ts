@@ -6,8 +6,8 @@ import {isFlagOfType, flagTypes} from '../flags';
 export interface RoomTaskArgs{}
 
 export class RoomTask extends Task{
-    constructor(manager: RoomManager, args: RoomTaskArgs, repeating: boolean = false, promiseId?: string, name: string = RoomTask.name){
-        super(manager, args, repeating, promiseId, name);
+    constructor(manager: RoomManager, args: RoomTaskArgs, name: string, repeating: boolean = false, promiseId?: string){
+        super(manager, args, name, repeating, promiseId);
     }
 }
 
@@ -18,8 +18,8 @@ interface CreepSpawnable{
 }
 
 export class RoomManager extends Manager{
-    constructor(actor: Room, memory: ManagerMemory){
-        super(actor, memory);
+    constructor(actor: Room){
+        super(actor, actor.memory);
     }
     //Returns creep id if found, true if spawning, else false
     //Only one priority can be used
@@ -149,7 +149,7 @@ export class RoomManager extends Manager{
     queue(action: RoomTask){
         super.queue(action);
     }
-    queuePriority(action: RoomTask){
-        super.queuePriority(action);
+    addPriority(action: RoomTask){
+        super.addPriority(action);
     }
 }

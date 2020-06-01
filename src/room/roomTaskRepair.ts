@@ -1,18 +1,17 @@
-import {registrare} from '../runner/runner';
-import {RoomRunner} from './roomRunner';
-import {RoomJobArgs, RoomJob} from './roomJob';
-import {CreepRunner} from '../creep/creepRunner';
+import {RoomTask, RoomManager, RoomTaskArgs} from './roomManager';
+import {CreepManager} from '../creep/creepManager';
 import {GeneralCreep} from '../creep/creepBody';
 import {CreepTaskRepairAuto} from '../creep/creepTaskRepairAuto';
-import {CreepTypes, CreepRoles} from '../enums';
+import {CreepTypes} from '../creep/creepUtils';
+import {CreepRoles} from './roomUtils';
 
-export class RoomJobRepair extends RoomJob{
-    constructor(runner: RoomRunner, args: RoomJobArgs, repeating: boolean = false, promiseId?: string){
-        super(runner, args, repeating, promiseId);
+export class RoomTaskRepair extends RoomTask{
+    constructor(manager: RoomManager, args: RoomTaskArgs, repeating: boolean = false, promiseId?: string, name: string = RoomTaskRepair.name){
+        super(manager, args, name, repeating, promiseId);
     }
-    run(){
-        let room = <Room>this.runner.actor;
-        let runner = <RoomRunner>this.runner;
+    run(): [boolean, boolean]{
+        let room = <Room>this.manager.actor;
+        let manager = <RoomManager>this.manager;
         //Are we maxed out
         if(room.memory.creepRoles[CreepRoles.REPAIR].current.length < room.memory.creepRoles[CreepRoles.REPAIR].max){
             //Find structures in need of repair
@@ -23,22 +22,20 @@ export class RoomJobRepair extends RoomJob{
             //Do we already have a reasonable amount of repairers
             if(targets.length > room.memory.creepRoles[CreepRoles.REPAIR].current.length * 4){
                 //Find / spawn creep
-                let creepId = runner.findCreep(CreepTypes.GENERAL, true);
+                let creepId = manager.findCreep(CreepTypes.GENERAL, true);
                 if(creepId && !(creepId === true)){
                     let creep = <Creep>Game.getObjectById(creepId);
-                    let creepRunner = new CreepRunner(creep);
+                    let creepRunner = new CreepManager(creep);
                     creepRunner.clearQueue();
                     let repairTask = new CreepTaskRepairAuto(creepRunner, {untilHits: wallTargetHits});
                     creepRunner.queue(repairTask);
                     room.memory.creepRoles[CreepRoles.REPAIR].current.push({creep: creepId, promise: repairTask.promiseId});
                 }else if(!creepId){
-                    runner.queueSpawn(new GeneralCreep(runner.maxCreepCost()));
+                    manager.queueSpawn(new GeneralCreep(manager.maxCreepCost()));
                 }
             }
         }
-        return false;
+        return [true, false];
     }
     
 }
-
-registrare["RoomJobRepair"] = RoomJobRepair;

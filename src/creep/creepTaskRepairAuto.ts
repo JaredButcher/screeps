@@ -9,15 +9,15 @@ export interface CreepTaskArgsRepairAuto extends CreepTaskArgs{
 
 export class CreepTaskRepairAuto extends CreepTask{
     constructor(manager: CreepManager, args: CreepTaskArgsRepairAuto, repeating: boolean = false, promiseId?: string, name: string = CreepTaskRepairAuto.name){
-        super(manager, args, repeating, promiseId);
+        super(manager, args, name, repeating, promiseId);
     }
-    run(): boolean{
+    run(): [boolean, boolean]{
         let creep = <Creep>this.manager.actor;
         let manager = <CreepManager>this.manager;
         let args = <CreepTaskArgsRepairAuto>this.args;
         if(creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0){
             manager.push(new CreepTaskFill(manager, {resourceType: RESOURCE_ENERGY}));
-            return false;
+            return [false, false];
         }
         if(!args.targetId){
             //find target
@@ -33,7 +33,7 @@ export class CreepTaskRepairAuto extends CreepTask{
                 args.range = 3;
             }else{
                 this.end(PromiseState.SUCESS);
-                return true;
+                return [true, false];
             }    
         }else if(super.run()){
             //Repair
@@ -46,6 +46,6 @@ export class CreepTaskRepairAuto extends CreepTask{
                 }
             }
         }
-        return false;
+        return [false, false];
     }
 }

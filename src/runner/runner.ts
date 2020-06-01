@@ -12,23 +12,38 @@ export class Runner{
     run(){
         if(this.memory.aQueue.length > 0){
             let aCurrentAction: Task | null = this.getAction(this.memory.aQueue[0]);
-            if(aCurrentAction && aCurrentAction.run()){
-                if(aCurrentAction.repeating){
-                    this.manager.queue(aCurrentAction);
+            if(aCurrentAction){
+                let result = aCurrentAction.run();
+                if(result[1]){
+                    this.manager.addPriority(aCurrentAction);
+                    this.manager.shift();
+                }else if(result[0]){
+                    if(aCurrentAction.repeating){
+                        this.manager.queue(aCurrentAction);
+                    }
+                    this.manager.shift();
                 }
-                this.manager.shift();
             }
         }
         let pJobsToKeep: Task[] = [];
         for(let pJob of this.memory.aPriority){
-            let currentAction: Task | null = this.getAction(pJob);
-            if(currentAction && (currentAction.run() || currentAction.repeating)){
-                pJobsToKeep.push(currentAction);
+            let aCurrentAction: Task | null = this.getAction(pJob);
+            if(aCurrentAction){
+                let result = aCurrentAction.run();
+                if(result[1]){
+                    this.manager.queue(aCurrentAction);
+                }else if(result[0]){
+                    if(aCurrentAction.repeating){
+                        pJobsToKeep.push(aCurrentAction);
+                    }
+                }else{
+                    pJobsToKeep.push(aCurrentAction);
+                }
             }
         }
         this.memory.aPriority = pJobsToKeep;
     }
     getAction(action: TaskMemory): Task | null{
-        return new Task(this.manager, action.args, action.repeating, action.promiseId);
+        return new Task(this.manager, action.args, Task.name, action.repeating, action.promiseId);
     }
 }

@@ -3,13 +3,13 @@ import {PromiseState} from '../utils';
 
 export class CreepTaskMoveTo extends CreepTask{
     constructor(manager: CreepManager, args: CreepTaskArgs, repeating: boolean = false, promiseId?: string, name: string = CreepTaskMoveTo.name){
-        super(manager, args, repeating, promiseId, name);
+        super(manager, args, name, repeating, promiseId);
     }
-    run(): boolean{
+    run(): [boolean, boolean]{
         if(super.run()){
             this.end(PromiseState.SUCESS);
-            return true;
+            return [true, false];
         }
-        return false;
+        return [false, false];
     }
 }

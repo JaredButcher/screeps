@@ -9,15 +9,15 @@ export interface CreepTaskArgsBuildAuto extends CreepTaskArgs{
 
 export class CreepTaskBuildAuto extends CreepTask{
     constructor(manager: CreepManager, args: CreepTaskArgsBuildAuto, repeating: boolean = false, promiseId?: string, name: string = CreepTaskBuildAuto.name){
-        super(manager, args, repeating, promiseId, name);
+        super(manager, args, name, repeating, promiseId, );
     }
-    run(): boolean{
+    run(): [boolean, boolean]{
         let creep = <Creep>this.manager.actor;
         let manager = <CreepManager>this.manager;
         let args = <CreepTaskArgsBuildAuto>this.args;
         if(creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0){
             manager.push(new CreepTaskFill(manager, {resourceType: RESOURCE_ENERGY}));
-            return false;
+            return [false, false];
         }
         //Make sure it is still a construction site to save a tick
         if(args.targetId){
@@ -26,7 +26,7 @@ export class CreepTaskBuildAuto extends CreepTask{
         }
         if(!args.targetId){
             //find target
-            let roomManager = new RoomManager(creep.room, creep.room.memory);
+            let roomManager = new RoomManager(creep.room);
             let targetFlag = creep.pos.findClosestByRange(roomManager.getConstructionSiteFlags());
             let target = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
             if(target){
@@ -39,13 +39,13 @@ export class CreepTaskBuildAuto extends CreepTask{
                 roomManager.activateConstructionSite(targetFlag);
             }else{
                 this.end(PromiseState.SUCESS);
-                return true;
+                return [true, false];
             }    
         }else if(super.run()){
             //Repair
             let target = Game.getObjectById(<Id<ConstructionSite>>args.targetId);
             creep.build(<ConstructionSite>target);
         }
-        return false;
+        return [false, false];
     }
 }

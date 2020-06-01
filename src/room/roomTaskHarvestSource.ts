@@ -1,25 +1,23 @@
-import {registrare} from '../runner/runner';
-import {RoomRunner} from './roomRunner';
-import {RoomJobArgs, RoomJob} from './roomJob';
-import {CreepRunner} from '../creep/creepRunner';
+import {RoomTask, RoomManager, RoomTaskArgs} from './roomManager';
+import {CreepManager} from '../creep/creepManager';
 import {CreepTaskEmpty} from '../creep/creepTaskEmpty';
 import {CreepTaskMoveTo} from '../creep/creepTaskMoveTo';
 import {CreepTaskHarvest, DropTarget} from '../creep/creepTaskHarvest';
 import {HarvestCreep, GeneralCreep} from 'creep/creepBody';
-import {CreepTypes} from '../enums';
+import {CreepTypes} from '../creep/creepUtils';
 
-export interface RoomJobHarvestSourceArgs extends RoomJobArgs{
+export interface RoomTaskHarvestSourceArgs extends RoomTaskArgs{
     sourceId: Id<Source>;
 }
 
-export class RoomJobHarvestSource extends RoomJob{
-    constructor(runner: RoomRunner, args: RoomJobHarvestSourceArgs, repeating: boolean = false, promiseId?: string){
-        super(runner, args, repeating, promiseId);
+export class RoomTaskHarvestSource extends RoomTask{
+    constructor(manager: RoomManager, args: RoomTaskHarvestSourceArgs, repeating: boolean = false, promiseId?: string, name: string = RoomTaskHarvestSource.name){
+        super(manager, args, name, repeating, promiseId);
     }
-    run(){
-        let args = <RoomJobHarvestSourceArgs>this.args;
-        let room = <Room>this.runner.actor;
-        let runner = <RoomRunner>this.runner;
+    run(): [boolean, boolean]{
+        let args = <RoomTaskHarvestSourceArgs>this.args;
+        let room = <Room>this.manager.actor;
+        let manager = <RoomManager>this.manager;
         let sourceEntry = room.memory.sources[args.sourceId];
         //Determin type of harvester / transporter is required
         let isDropMining = sourceEntry.containerId != undefined || sourceEntry.linkId != undefined;
@@ -30,7 +28,7 @@ export class RoomJobHarvestSource extends RoomJob{
             if(!currentCreep || <number>currentCreep.ticksToLive < 120){
                 //In crises create the required creeps of lower costs with highest priority
                 if(room.memory.crashRecovery){
-                    let creep = runner.findCreep(CreepTypes.HARVEST, false, false, true);
+                    let creep = manager.findCreep(CreepTypes.HARVEST, false, false, true);
                     if(creep && !(creep === true)){
                         if(sourceEntry.linkId){
                             this.queueDropHarvest(creep, sourceEntry, args.sourceId, sourceEntry.linkId);
@@ -38,10 +36,10 @@ export class RoomJobHarvestSource extends RoomJob{
                             this.queueDropHarvest(creep, sourceEntry, args.sourceId, <Id<StructureContainer>>sourceEntry.containerId);
                         }
                     }else if(!creep){
-                        runner.queueSpawn(new HarvestCreep(Math.max(runner.currentMaxCreepCost(), 300)), true);
+                        manager.queueSpawn(new HarvestCreep(Math.max(manager.currentMaxCreepCost(), 300)), true);
                     }
                 }else{
-                    let creep = runner.findCreep(CreepTypes.HARVEST, false, false, false, (<Source>Game.getObjectById(args.sourceId)).pos);
+                    let creep = manager.findCreep(CreepTypes.HARVEST, false, false, false, (<Source>Game.getObjectById(args.sourceId)).pos);
                     if(creep && !(creep === true)){
                         if(sourceEntry.linkId){
                             this.queueDropHarvest(creep, sourceEntry, args.sourceId, sourceEntry.linkId);
@@ -49,7 +47,7 @@ export class RoomJobHarvestSource extends RoomJob{
                             this.queueDropHarvest(creep, sourceEntry, args.sourceId, <Id<StructureContainer>>sourceEntry.containerId);
                         }
                     }else if(!creep){
-                        runner.queueSpawn(new HarvestCreep(runner.maxCreepCost()));
+                        manager.queueSpawn(new HarvestCreep(manager.maxCreepCost()));
                     }
                 }
             }
@@ -58,63 +56,63 @@ export class RoomJobHarvestSource extends RoomJob{
             if(!currentCreep || <number>currentCreep.ticksToLive < 120){
                 //In crises create the required creeps of lower costs with highest priority
                 if(room.memory.crashRecovery){
-                    let creep = runner.findCreep(CreepTypes.HARVEST, false, false, true);
+                    let creep = manager.findCreep(CreepTypes.HARVEST, false, false, true);
                     if(creep && !(creep === true)){
                         this.queueGeneralHarvest(creep, sourceEntry, args.sourceId);
                     }else{
-                        runner.queueSpawn(new GeneralCreep(Math.max(runner.currentMaxCreepCost(), 300)), true);
+                        manager.queueSpawn(new GeneralCreep(Math.max(manager.currentMaxCreepCost(), 300)), true);
                     }
                 }else{
-                    let creep = runner.findCreep(CreepTypes.HARVEST, false, false, false, (<Source>Game.getObjectById(args.sourceId)).pos);
+                    let creep = manager.findCreep(CreepTypes.HARVEST, false, false, false, (<Source>Game.getObjectById(args.sourceId)).pos);
                     if(creep && !(creep === true)){
                         this.queueGeneralHarvest(creep, sourceEntry, args.sourceId);
                     }else if(!creep){
-                        runner.queueSpawn(new GeneralCreep(Math.min(runner.maxCreepCost(), 1200)));
+                        manager.queueSpawn(new GeneralCreep(Math.min(manager.maxCreepCost(), 1200)));
                     }
                 }
             }
         }
         //Find or queue creation of such
-        return false;
+        return [true, false];
     }
     queueGeneralHarvest(creep: Id<Creep>, sourceEntry: ResourceMemory, sourceId: Id<Source>){
-        let creepRunner = new CreepRunner(<Creep>Game.getObjectById(creep));
-        creepRunner.clearQueue();
-        creepRunner.queue(new CreepTaskEmpty(creepRunner, {
+        let creeep = <Creep>Game.getObjectById(creep);
+        let creepManager = new CreepManager(creeep);
+        creepManager.clearQueue();
+        creepManager.queue(new CreepTaskEmpty(creepManager, {
             resourceType: RESOURCE_ENERGY
         }, true));
-        let harvestTask = new CreepTaskHarvest(creepRunner, {
+        let harvestTask = new CreepTaskHarvest(creepManager, {
             resourceType: RESOURCE_ENERGY,
             targetId: sourceId
         }, true);
-        creepRunner.queue(harvestTask);
+        creepManager.queue(harvestTask);
         sourceEntry.harvesters.push({creep: creep, promise: harvestTask.promiseId});
     }
     queueDropHarvest(creep: Id<Creep>, sourceEntry: ResourceMemory, sourceId: Id<Source>, dropId: Id<DropTarget>){
-        let creepRunner = new CreepRunner(<Creep>Game.getObjectById(creep));
+        let creeep = <Creep>Game.getObjectById(creep);
+        let creepManager = new CreepManager(creeep);
         let target = <Source>Game.getObjectById(sourceId);
         let dropTarget = <DropTarget>Game.getObjectById(dropId);
-        creepRunner.clearQueue();
-        creepRunner.queue(new CreepTaskMoveTo(creepRunner, {
+        creepManager.clearQueue();
+        creepManager.queue(new CreepTaskMoveTo(creepManager, {
             x: target.pos.x,
             y: target.pos.y,
             roomName: target.pos.roomName,
             range: 1
         }));
-        creepRunner.queue(new CreepTaskMoveTo(creepRunner, {
+        creepManager.queue(new CreepTaskMoveTo(creepManager, {
             x: dropTarget.pos.x,
             y: dropTarget.pos.y,
             roomName: dropTarget.pos.roomName,
             range: 1
         }));
-        let harvestTask = new CreepTaskHarvest(creepRunner, {
+        let harvestTask = new CreepTaskHarvest(creepManager, {
             resourceType: RESOURCE_ENERGY,
             targetId: sourceId,
             drop: dropId
         }, true);
-        creepRunner.queue(harvestTask);
+        creepManager.queue(harvestTask);
         sourceEntry.harvesters.push({creep: creep, promise: harvestTask.promiseId});
     }
 }
-
-registrare["RoomJobHarvestSource"] = RoomJobHarvestSource;
