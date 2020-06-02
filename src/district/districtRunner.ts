@@ -4,7 +4,7 @@ import {DistrictManager, DistrictTask} from './districtManager';
 
 export class DistrictRunner extends Runner{
     constructor(memory: DisctrictMemory){
-        super({}, memory);
+        super({}, memory, new DistrictManager(memory));
     }
     getAction(taskMemory: TaskMemory): DistrictTask | null{
         let manager = <DistrictManager>this.manager;

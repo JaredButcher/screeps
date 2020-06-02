@@ -35,7 +35,7 @@ export class CreepTaskRepairAuto extends CreepTask{
                 this.end(PromiseState.SUCESS);
                 return [true, false];
             }    
-        }else if(super.run()){
+        }else if(super.run()[0]){
             //Repair
             let target = <Structure>Game.getObjectById(<Id<Structure>>args.targetId);
             let status: ScreepsReturnCode = creep.repair(target);

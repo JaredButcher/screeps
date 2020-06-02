@@ -41,7 +41,7 @@ export class CreepTaskBuildAuto extends CreepTask{
                 this.end(PromiseState.SUCESS);
                 return [true, false];
             }    
-        }else if(super.run()){
+        }else if(super.run()[0]){
             //Repair
             let target = Game.getObjectById(<Id<ConstructionSite>>args.targetId);
             creep.build(<ConstructionSite>target);

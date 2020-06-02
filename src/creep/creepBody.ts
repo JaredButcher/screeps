@@ -19,7 +19,7 @@ export class CreepBody{
 export class GeneralCreep extends CreepBody{
     constructor(cost: number){
         super(cost, 2500, 200, CreepTypes.GENERAL);
-        for(let i = this.cost; i >= 0;){
+        for(let i = this.cost; i > 0;){
             if(i >= 50){
                 this.body.push(MOVE);
                 i -= 50;
@@ -54,7 +54,7 @@ export class HarvestCreep extends CreepBody{
                 i -= 100;
             }
         }
-        for(; i >= 0;){
+        for(; i > 0;){
             if(i >= 50){
                 this.body.push(MOVE);
                 i -= 50;
@@ -72,7 +72,7 @@ export class HarvestCreep extends CreepBody{
 export class FerryCreep extends CreepBody{
     constructor(cost: number){
         super(cost, 2500, 250, CreepTypes.TRANSPORT);
-        for(let i = this.cost; i >= 0;){
+        for(let i = this.cost; i > 0;){
             if(i >= 50){
                 this.body.push(MOVE);
                 i -= 50;
@@ -90,7 +90,7 @@ export class FerryCreep extends CreepBody{
 export class FastFerryCreep extends CreepBody{
     constructor(cost: number){
         super(cost, 2500, 150, CreepTypes.TRANSPORT);
-        for(let i = this.cost; i >= 0;){
+        for(let i = this.cost; i > 0;){
             if(i >= 50){
                 this.body.push(MOVE);
                 i -= 50;

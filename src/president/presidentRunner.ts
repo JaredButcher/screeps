@@ -4,7 +4,7 @@ import {PresidentManager, PresidentTask} from './presidentManager';
 
 export class PresidentRunner extends Runner{
     constructor(){
-        super({}, Memory.president);
+        super({}, Memory.president, new PresidentManager());
     }
     getAction(taskMemory: TaskMemory): PresidentTask | null{
         let manager = <PresidentManager>this.manager;

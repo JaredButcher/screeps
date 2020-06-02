@@ -10,7 +10,7 @@ import {RoomTaskRepair} from './roomTaskRepair';
 
 export class RoomRunner extends Runner{
     constructor(room: Room){
-        super(room, room.memory);
+        super(room, room.memory, new RoomManager(room));
     }
     getAction(taskMemory: TaskMemory): RoomTask | null{
         let manager = <RoomManager>this.manager;

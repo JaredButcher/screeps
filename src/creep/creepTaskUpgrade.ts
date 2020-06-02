@@ -15,7 +15,7 @@ export class CreepTaskUpgrade extends CreepTask{
         super(manager, args, name, repeating, promiseId);
     }
     run(): [boolean, boolean]{
-        if(super.run()){
+        if(super.run()[0]){
             let creep = <Creep>this.manager.actor;
             let args = <CreepTaskArgsUpgrade>this.args;
             let target: StructureController = <StructureController>Game.getObjectById(args.targetId);

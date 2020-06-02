@@ -16,7 +16,7 @@ export class CreepTaskRepair extends CreepTask{
         super(manager, args, name, repeating, promiseId);
     }
     run(): [boolean, boolean]{
-        if(super.run()){
+        if(super.run()[0]){
             let creep = <Creep>this.manager.actor;
             let args = <CreepTaskArgsRepair>this.args;
             let target: Structure = <Structure>Game.getObjectById(args.targetId);

@@ -45,12 +45,12 @@ export function initRoomMemory(room: Room) {
     let roomManager = new RoomManager(room);
     for(let source of room.find(FIND_SOURCES)){
         room.memory.sources[source.id] = {hasContainer: false, hasRoad: false, hasLink: false, harvesters: [], otherUsers: []};
-        roomManager.queue(new RoomTaskHarvestSource(roomManager, {sourceId: source.id}));
+        roomManager.queue(new RoomTaskHarvestSource(roomManager, {sourceId: source.id}, true));
     }
-    roomManager.queue(new RoomTaskPlan(roomManager, {}));
-    roomManager.queue(new RoomTaskDefense(roomManager, {}));
-    roomManager.queue(new RoomTaskBuild(roomManager, {}));
-    roomManager.queue(new RoomTaskRepair(roomManager, {}));
-    roomManager.queue(new RoomTaskUpgrade(roomManager, {}));
-    roomManager.queue(new RoomTaskSpawn(roomManager, {}));
+    roomManager.queue(new RoomTaskPlan(roomManager, {}, true));
+    roomManager.queue(new RoomTaskDefense(roomManager, {}, true));
+    roomManager.queue(new RoomTaskBuild(roomManager, {}, true));
+    roomManager.queue(new RoomTaskRepair(roomManager, {}, true));
+    roomManager.queue(new RoomTaskUpgrade(roomManager, {}, true));
+    roomManager.queue(new RoomTaskSpawn(roomManager, {}, true));
 }

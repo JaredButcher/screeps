@@ -4,10 +4,10 @@ export class Runner{
     memory: ManagerMemory;
     actor: object;
     manager: Manager;
-    constructor(actor: object, memory: ManagerMemory){
+    constructor(actor: object, memory: ManagerMemory, manager: Manager){
         this.actor = actor;
         this.memory = memory;
-        this.manager = new Manager(actor, memory);
+        this.manager = manager;
     }
     run(){
         if(this.memory.aQueue.length > 0){

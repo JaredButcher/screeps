@@ -15,6 +15,7 @@ export class RoomTaskHarvestSource extends RoomTask{
         super(manager, args, name, repeating, promiseId);
     }
     run(): [boolean, boolean]{
+        console.log("RM SOURCE HARVEST");
         let args = <RoomTaskHarvestSourceArgs>this.args;
         let room = <Room>this.manager.actor;
         let manager = <RoomManager>this.manager;
@@ -55,20 +56,12 @@ export class RoomTaskHarvestSource extends RoomTask{
             //General mining
             if(!currentCreep || <number>currentCreep.ticksToLive < 120){
                 //In crises create the required creeps of lower costs with highest priority
-                if(room.memory.crashRecovery){
-                    let creep = manager.findCreep(CreepTypes.HARVEST, false, false, true);
-                    if(creep && !(creep === true)){
-                        this.queueGeneralHarvest(creep, sourceEntry, args.sourceId);
-                    }else{
-                        manager.queueSpawn(new GeneralCreep(Math.max(manager.currentMaxCreepCost(), 300)), true);
-                    }
-                }else{
-                    let creep = manager.findCreep(CreepTypes.HARVEST, false, false, false, (<Source>Game.getObjectById(args.sourceId)).pos);
-                    if(creep && !(creep === true)){
-                        this.queueGeneralHarvest(creep, sourceEntry, args.sourceId);
-                    }else if(!creep){
-                        manager.queueSpawn(new GeneralCreep(Math.min(manager.maxCreepCost(), 1200)));
-                    }
+                let creep = manager.findCreep(CreepTypes.GENERAL, false, false, false, (<Source>Game.getObjectById(args.sourceId)).pos);
+                console.log(creep);
+                if(creep && !(creep === true)){
+                    this.queueGeneralHarvest(creep, sourceEntry, args.sourceId);
+                }else if(!creep){
+                    manager.queueSpawn(new GeneralCreep(Math.min(manager.maxCreepCost(), 1200)));
                 }
             }
         }

@@ -20,7 +20,7 @@ export class CreepTaskEmpty extends CreepTask{
             this.end(PromiseState.SUCESS);
             return [true, false];
         }
-        if(super.run()){
+        if(super.run()[0]){
             if(!args.targetId){
                 if(!this.setTarget(creep)){
                     this.end(PromiseState.ERR_INVALID_TARGET);

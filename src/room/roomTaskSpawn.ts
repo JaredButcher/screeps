@@ -22,7 +22,7 @@ export class RoomTaskSpawn extends RoomTask{
             let spawns = room.find(FIND_MY_SPAWNS, {filter: (x) => !x.spawning});
             if(spawns.length > 0){
                 let name = spawnQueue[0].bodyType.toString() + Memory.creepCount;
-                if(spawns[0].spawnCreep(spawnQueue[0].body, name, {dryRun: true})){
+                if(spawns[0].spawnCreep(spawnQueue[0].body, name, {dryRun: true}) == OK){
                     spawns[0].spawnCreep(spawnQueue[0].body, name, {memory: {
                         bodyType: spawnQueue[0].bodyType, 
                         inited: true,

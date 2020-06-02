@@ -28,6 +28,10 @@ export class RoomManager extends Manager{
         //Find valid free creeps
         let creeps = room.find(FIND_MY_CREEPS, {filter: (x) => !x.spawning && x.memory.bodyType == bodyType && (override || x.memory.aQueue.length == 0)});
         //Does a valid free creep exist
+        console.log("FOUND: " + creeps.length)
+        console.log("NOT: " + room.find(FIND_MY_CREEPS)[0].memory.bodyType)
+        console.log("NOT: " + room.find(FIND_MY_CREEPS)[0].memory.bodyType == bodyType);
+        console.log("NOT: " + bodyType)
         if(creeps.length > 0){
             if(prioritizeFull){
                 creeps.sort((a, b) => a.store.getFreeCapacity(RESOURCE_ENERGY) - b.store.getFreeCapacity(RESOURCE_ENERGY));

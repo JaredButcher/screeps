@@ -22,7 +22,7 @@ export class CreepTaskHarvest extends CreepTask{
         super(manager, args, name, repeating, promiseId);
     }
     run(): [boolean, boolean]{
-        if(super.run()){
+        if(super.run()[0]){
             let creep = <Creep>this.manager.actor;
             let args = <CreepTaskArgsHarvest>this.args;
             let status: ScreepsReturnCode = creep.harvest(<HarvestTarget>Game.getObjectById(args.targetId));

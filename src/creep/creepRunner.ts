@@ -12,7 +12,7 @@ import {CreepTaskBuildAuto, CreepTaskArgsBuildAuto} from './creepTaskBuildAuto';
 
 export class CreepRunner extends Runner{
     constructor(creep: Creep){
-        super(creep, creep.memory);
+        super(creep, creep.memory, new CreepManager(creep));
     }
     getAction(taskMemory: TaskMemory): CreepTask | null{
         switch(taskMemory.name){

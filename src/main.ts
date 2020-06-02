@@ -12,22 +12,18 @@ export function loop(){
         console.log("INIT MEMORY")
         initMemory();
     }
-    console.log(1)
+    //initMemory();
     attach();
-    console.log(2)
     new PresidentRunner().run();
-    console.log(3)
     for(let district in Memory.districts){
         new DistrictRunner(Memory.districts[district]).run();
     }
-    console.log(4)
     for(let roomName in Game.rooms){
         new RoomRunner(Game.rooms[roomName]).run();
     }
-    console.log(5)
-    for(let creepId in Game.creeps){
-        let creep = <Creep>Game.getObjectById(creepId);
+    for(let creepName in Game.creeps){
+        let creep = Game.creeps[creepName];
         if(!creep.spawning) new CreepRunner(creep).run();
     }
-    console.log(6)
+    //cleanMemory();
 }

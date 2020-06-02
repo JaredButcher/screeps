@@ -25,7 +25,7 @@ export class CreepTaskFill extends CreepTask{
             this.end(PromiseState.SUCESS);
             return [true, false];
         }
-        if(super.run()){
+        if(super.run()[0]){
             if(!args.targetId){
                 if(!this.setTarget(creep)){
                     let sourceMem = creep.room.memory.sources;

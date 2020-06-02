@@ -6,7 +6,7 @@ export class CreepTaskMoveTo extends CreepTask{
         super(manager, args, name, repeating, promiseId);
     }
     run(): [boolean, boolean]{
-        if(super.run()){
+        if(super.run()[0]){
             this.end(PromiseState.SUCESS);
             return [true, false];
         }

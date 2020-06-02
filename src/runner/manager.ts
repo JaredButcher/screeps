@@ -31,7 +31,7 @@ export class Task{
         }
     }
     toJSON(){
-        return JSON.stringify({promiseId: this.promiseId, repeating: this.repeating, args: this.args, name: this.name});
+        return {promiseId: this.promiseId, repeating: this.repeating, args: this.args, name: this.name};
     }
 }
 

@@ -19,12 +19,13 @@ export function initMemory(){
     for(let roomName in Game.rooms){
         initRoomMemory(Game.rooms[roomName]);
     }
-    for(let creepId in Game.creeps){
-        let creep = <Creep>Game.getObjectById(creepId);
+    for(let creepName in Game.creeps){
+        let creep = <Creep>Game.creeps[creepName];
         creep.memory.inited = true;
         creep.memory.aPromises = [];
         creep.memory.aQueue = [];
         creep.memory.aPromises = [];
+        creep.memory.aPriority = [];
         if(WORK in creep.body){
             creep.memory.bodyType = CreepTypes.GENERAL;
         }else if(CLAIM in creep.body){
