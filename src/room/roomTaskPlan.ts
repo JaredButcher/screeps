@@ -5,10 +5,10 @@ import {PromiseState} from '../utils';
 import {CreepRoles} from './roomUtils';
 
 export class RoomTaskPlan extends RoomTask{
-    constructor(manager: RoomManager, args: RoomTaskArgs, repeating: boolean = false, promiseId?: string, name: string = RoomTaskPlan.name){
-        super(manager, args, name, repeating, promiseId);
+    constructor(manager: RoomManager, args: RoomTaskArgs, repeating: boolean = false, priority: boolean = false, promiseId?: string, name: string = RoomTaskPlan.name){
+        super(manager, args, name, repeating, priority, promiseId);
     }
-    run(): [boolean, boolean]{
+    run(): boolean{
         let room = <Room>this.manager.actor;
         let crashing: boolean = true;
         if(room.controller){
@@ -54,7 +54,7 @@ export class RoomTaskPlan extends RoomTask{
             }
         }
         //Build structures
-        return [true, false];
+        return true;
     }
     planByController(room: Room){
         let levelChange = room.memory.lastLevel != (<StructureController>room.controller).level;

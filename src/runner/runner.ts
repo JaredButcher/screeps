@@ -10,40 +10,24 @@ export class Runner{
         this.manager = manager;
     }
     run(){
-        if(this.memory.aQueue.length > 0){
-            let aCurrentAction: Task | null = this.getAction(this.memory.aQueue[0]);
-            if(aCurrentAction){
-                let result = aCurrentAction.run();
-                if(result[1]){
-                    this.manager.addPriority(aCurrentAction);
-                    this.manager.shift();
-                }else if(result[0]){
-                    if(aCurrentAction.repeating){
-                        this.manager.queue(aCurrentAction);
+        let tasksRan = 0;
+        for(let taskMemory of this.memory.taskQueue){
+            if(taskMemory.priority || tasksRan == 0){
+                if(!taskMemory.priority) ++tasksRan;
+                let currentTask: Task | null = this.getTask(taskMemory);
+                if(currentTask){
+                    let result = currentTask.run();
+                    if(result){
+                        if(currentTask.repeating){
+                            this.manager.queue(currentTask);
+                        }
+                        this.manager.shift();
                     }
-                    this.manager.shift();
                 }
             }
         }
-        let pJobsToKeep: Task[] = [];
-        for(let pJob of this.memory.aPriority){
-            let aCurrentAction: Task | null = this.getAction(pJob);
-            if(aCurrentAction){
-                let result = aCurrentAction.run();
-                if(result[1]){
-                    this.manager.queue(aCurrentAction);
-                }else if(result[0]){
-                    if(aCurrentAction.repeating){
-                        pJobsToKeep.push(aCurrentAction);
-                    }
-                }else{
-                    pJobsToKeep.push(aCurrentAction);
-                }
-            }
-        }
-        this.memory.aPriority = pJobsToKeep;
     }
-    getAction(action: TaskMemory): Task | null{
-        return new Task(this.manager, action.args, Task.name, action.repeating, action.promiseId);
+    getTask(task: TaskMemory): Task | null{
+        return new Task(this.manager, task.args, Task.name, task.repeating, task.priority, task.promiseId);
     }
 }

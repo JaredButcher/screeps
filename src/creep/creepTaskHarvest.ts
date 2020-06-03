@@ -13,16 +13,16 @@ type HarvestTarget = Source | Mineral<MineralConstant> | Deposit;
 export type DropTarget = Structure<STRUCTURE_CONTAINER> | Structure<STRUCTURE_LINK>;
 
 export class CreepTaskHarvest extends CreepTask{
-    constructor(manager: CreepManager, args: CreepTaskArgsHarvest, repeating: boolean = false, promiseId?: string, name: string = CreepTaskHarvest.name){
+    constructor(manager: CreepManager, args: CreepTaskArgsHarvest, repeating: boolean = false, priority: boolean = false, promiseId?: string, name: string = CreepTaskHarvest.name){
         let target: HarvestTarget = <HarvestTarget>Game.getObjectById(args.targetId);
         args.x = target.pos.x;
         args.y = target.pos.y;
         args.roomName = target.pos.roomName;
         args.range = 1;
-        super(manager, args, name, repeating, promiseId);
+        super(manager, args, name, repeating, priority, promiseId);
     }
-    run(): [boolean, boolean]{
-        if(super.run()[0]){
+    run(): boolean{
+        if(super.run()){
             let creep = <Creep>this.manager.actor;
             let args = <CreepTaskArgsHarvest>this.args;
             let status: ScreepsReturnCode = creep.harvest(<HarvestTarget>Game.getObjectById(args.targetId));
@@ -31,18 +31,18 @@ export class CreepTaskHarvest extends CreepTask{
                 creep.transfer(target, args.resourceType);
             }else if(creep.store.getFreeCapacity(args.resourceType) == 0){
                 this.end(PromiseState.SUCESS);
-                return [true, false];
+                return true;
             }
             if((status == ERR_NOT_ENOUGH_RESOURCES || status == ERR_TIRED) && args.untilSourceEmpty ||
                 args.untilAmount && creep.store.getFreeCapacity(args.resourceType) >= args.untilAmount){
                 this.end(PromiseState.SUCESS);
-                return [true, false];
+                return true;
             }
             if(status != OK && status != ERR_NOT_ENOUGH_RESOURCES && status != ERR_TIRED){
                 this.end(PromiseState.ERR_MISC_ERROR);
-                return [true, false];
+                return true;
             }
         }
-        return [false, false];
+        return false;
     }
 }

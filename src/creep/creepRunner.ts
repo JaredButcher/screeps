@@ -17,23 +17,23 @@ export class CreepRunner extends Runner{
     getAction(taskMemory: TaskMemory): CreepTask | null{
         switch(taskMemory.name){
             case CreepTaskMoveTo.name:
-                return new CreepTaskMoveTo(this.manager, taskMemory.args, taskMemory.repeating, taskMemory.promiseId);
+                return new CreepTaskMoveTo(this.manager, taskMemory.args, taskMemory.repeating, taskMemory.priority, taskMemory.promiseId);
             case CreepTaskEmpty.name:
-                return new CreepTaskEmpty(this.manager, <CreepTaskArgsEmpty>taskMemory.args, taskMemory.repeating, taskMemory.promiseId);
+                return new CreepTaskEmpty(this.manager, <CreepTaskArgsEmpty>taskMemory.args, taskMemory.repeating, taskMemory.priority, taskMemory.promiseId);
             case CreepTaskFill.name:
-                return new CreepTaskFill(this.manager, <CreepTaskArgsFill>taskMemory.args, taskMemory.repeating, taskMemory.promiseId);
+                return new CreepTaskFill(this.manager, <CreepTaskArgsFill>taskMemory.args, taskMemory.repeating, taskMemory.priority, taskMemory.promiseId);
             case CreepTaskHarvest.name:
-                return new CreepTaskHarvest(this.manager, <CreepTaskArgsHarvest>taskMemory.args, taskMemory.repeating, taskMemory.promiseId);
+                return new CreepTaskHarvest(this.manager, <CreepTaskArgsHarvest>taskMemory.args, taskMemory.repeating, taskMemory.priority, taskMemory.promiseId);
             case CreepTaskRepair.name:
-                return new CreepTaskRepair(this.manager, <CreepTaskArgsRepair>taskMemory.args, taskMemory.repeating, taskMemory.promiseId);
+                return new CreepTaskRepair(this.manager, <CreepTaskArgsRepair>taskMemory.args, taskMemory.repeating, taskMemory.priority, taskMemory.promiseId);
             case CreepTaskRepairAuto.name:
-                return new CreepTaskRepairAuto(this.manager, <CreepTaskArgsRepairAuto>taskMemory.args, taskMemory.repeating, taskMemory.promiseId);
+                return new CreepTaskRepairAuto(this.manager, <CreepTaskArgsRepairAuto>taskMemory.args, taskMemory.repeating, taskMemory.priority, taskMemory.promiseId);
             case CreepTaskUpgrade.name:
-                return new CreepTaskUpgrade(this.manager, <CreepTaskArgsUpgrade>taskMemory.args, taskMemory.repeating, taskMemory.promiseId);
+                return new CreepTaskUpgrade(this.manager, <CreepTaskArgsUpgrade>taskMemory.args, taskMemory.repeating, taskMemory.priority, taskMemory.promiseId);
             case CreepTaskFerry.name:
-                return new CreepTaskFerry(this.manager, <CreepTaskArgsFerry>taskMemory.args, taskMemory.repeating, taskMemory.promiseId);
+                return new CreepTaskFerry(this.manager, <CreepTaskArgsFerry>taskMemory.args, taskMemory.repeating, taskMemory.priority, taskMemory.promiseId);
             case CreepTaskBuildAuto.name:
-                return new CreepTaskBuildAuto(this.manager, <CreepTaskArgsBuildAuto>taskMemory.args, taskMemory.repeating, taskMemory.promiseId);
+                return new CreepTaskBuildAuto(this.manager, <CreepTaskArgsBuildAuto>taskMemory.args, taskMemory.repeating, taskMemory.priority, taskMemory.promiseId);
         }
         return null;
     }

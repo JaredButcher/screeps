@@ -16,19 +16,19 @@ export class RoomRunner extends Runner{
         let manager = <RoomManager>this.manager;
         switch(taskMemory.name){
             case RoomTaskUpgrade.name:
-                return new RoomTaskUpgrade(manager, taskMemory.args, taskMemory.repeating, taskMemory.promiseId);
+                return new RoomTaskUpgrade(manager, taskMemory.args, taskMemory.repeating, taskMemory.priority, taskMemory.promiseId);
             case RoomTaskBuild.name:
-                return new RoomTaskBuild(manager, taskMemory.args, taskMemory.repeating, taskMemory.promiseId);
+                return new RoomTaskBuild(manager, taskMemory.args, taskMemory.repeating, taskMemory.priority, taskMemory.promiseId);
             case RoomTaskDefense.name:
-                return new RoomTaskDefense(manager, taskMemory.args, taskMemory.repeating, taskMemory.promiseId);
+                return new RoomTaskDefense(manager, taskMemory.args, taskMemory.repeating, taskMemory.priority, taskMemory.promiseId);
             case RoomTaskHarvestSource.name:
-                return new RoomTaskHarvestSource(manager, <RoomTaskHarvestSourceArgs>taskMemory.args, taskMemory.repeating, taskMemory.promiseId);
+                return new RoomTaskHarvestSource(manager, <RoomTaskHarvestSourceArgs>taskMemory.args, taskMemory.repeating, taskMemory.priority, taskMemory.promiseId);
             case RoomTaskSpawn.name:
-                return new RoomTaskSpawn(manager, taskMemory.args, taskMemory.repeating, taskMemory.promiseId);
+                return new RoomTaskSpawn(manager, taskMemory.args, taskMemory.repeating, taskMemory.priority, taskMemory.promiseId);
             case RoomTaskPlan.name:
-                return new RoomTaskPlan(manager, taskMemory.args, taskMemory.repeating, taskMemory.promiseId);
+                return new RoomTaskPlan(manager, taskMemory.args, taskMemory.repeating, taskMemory.priority, taskMemory.promiseId);
             case RoomTaskRepair.name:
-                return new RoomTaskRepair(manager, taskMemory.args, taskMemory.repeating, taskMemory.promiseId);
+                return new RoomTaskRepair(manager, taskMemory.args, taskMemory.repeating, taskMemory.priority, taskMemory.promiseId);
         }
         return null;
     }

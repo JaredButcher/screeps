@@ -25,5 +25,4 @@ export function loop(){
         let creep = Game.creeps[creepName];
         if(!creep.spawning) new CreepRunner(creep).run();
     }
-    //cleanMemory();
 }

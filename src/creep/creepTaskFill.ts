@@ -14,25 +14,25 @@ export interface CreepTaskArgsFill extends CreepTaskArgs{
 export type StorageStructure = Structure<STRUCTURE_CONTAINER> | Structure<STRUCTURE_STORAGE>;
 
 export class CreepTaskFill extends CreepTask{
-    constructor(manager: CreepManager, args: CreepTaskArgsFill, repeating: boolean = false, promiseId?: string, name: string = CreepTaskFill.name){
+    constructor(manager: CreepManager, args: CreepTaskArgsFill, repeating: boolean = false, priority: boolean = false, promiseId?: string, name: string = CreepTaskFill.name){
         args.range = 1;
-        super(manager, args, name, repeating, promiseId);
+        super(manager, args, name, repeating, priority, promiseId);
     }
-    run(): [boolean, boolean]{
+    run(): boolean{
         let creep = <Creep>this.manager.actor;
         let args = <CreepTaskArgsFill>this.args;
         if((args.amount && creep.store.getUsedCapacity(args.resourceType) >= args.amount) || creep.store.getFreeCapacity(args.resourceType) == 0){
             this.end(PromiseState.SUCESS);
-            return [true, false];
+            return true;
         }
-        if(super.run()[0]){
+        if(super.run()){
             if(!args.targetId){
                 if(!this.setTarget(creep)){
                     let sourceMem = creep.room.memory.sources;
                     let sources = creep.room.find(FIND_SOURCES).sort((a, b) => sourceMem[a.id].otherUsers.length - sourceMem[b.id].otherUsers.length);
                     if(sources.length == 0){
                         this.end(PromiseState.ERR_MISC_ERROR);
-                        return [false, false];
+                        return false;
                     }
                     let harvestArgs:CreepTaskArgsHarvest = {
                         resourceType: RESOURCE_ENERGY,
@@ -41,19 +41,19 @@ export class CreepTaskFill extends CreepTask{
                     let harvestTask = new CreepTaskHarvest(this.manager, harvestArgs)
                     sourceMem[sources[0].id].otherUsers.push({creep: creep.id, promise: harvestTask.promiseId})
                     this.manager.push(harvestTask);
-                    return [false, false];
+                    return false;
                 }else{
-                    return [false, false];
+                    return false;
                 }
             }else{
                 let target: StorageStructure = <StorageStructure>Game.getObjectById(args.targetId);
                 if(creep.withdraw(target, args.resourceType) != OK){
                     args.targetId = undefined;
                 }
-                return [false, false];
+                return false;
             }
         }
-        return [false, false];
+        return false;
     }
     setTarget(creep: Creep): boolean{
         let args = <CreepTaskArgsFill>this.args;

@@ -6,8 +6,8 @@ import {isFlagOfType, flagTypes} from '../flags';
 export interface RoomTaskArgs{}
 
 export class RoomTask extends Task{
-    constructor(manager: RoomManager, args: RoomTaskArgs, name: string, repeating: boolean = false, promiseId?: string){
-        super(manager, args, name, repeating, promiseId);
+    constructor(manager: RoomManager, args: RoomTaskArgs, name: string, repeating: boolean = false, priority: boolean = false, promiseId?: string){
+        super(manager, args, name, repeating, priority, promiseId);
     }
 }
 
@@ -26,12 +26,8 @@ export class RoomManager extends Manager{
     findCreep(bodyType: CreepTypes, prioritizeFull = false, prioritizeEmpty = false, override = false, prioritizeDistance?: RoomPosition): boolean | Id<Creep>{
         let room = <Room>this.actor;
         //Find valid free creeps
-        let creeps = room.find(FIND_MY_CREEPS, {filter: (x) => !x.spawning && x.memory.bodyType == bodyType && (override || x.memory.aQueue.length == 0)});
+        let creeps = room.find(FIND_MY_CREEPS, {filter: (x) => !x.spawning && x.memory.bodyType == bodyType && (override || x.memory.taskQueue.length == 0)});
         //Does a valid free creep exist
-        console.log("FOUND: " + creeps.length)
-        console.log("NOT: " + room.find(FIND_MY_CREEPS)[0].memory.bodyType)
-        console.log("NOT: " + room.find(FIND_MY_CREEPS)[0].memory.bodyType == bodyType);
-        console.log("NOT: " + bodyType)
         if(creeps.length > 0){
             if(prioritizeFull){
                 creeps.sort((a, b) => a.store.getFreeCapacity(RESOURCE_ENERGY) - b.store.getFreeCapacity(RESOURCE_ENERGY));
@@ -40,12 +36,12 @@ export class RoomManager extends Manager{
             }else if(prioritizeDistance){
                 return (<Creep>prioritizeDistance.findClosestByRange(creeps)).id;
             }
-            //V8 js array#sort is now stable
-            if(override){
-                creeps.sort((a, b) => a.memory.aQueue.length - b.memory.aQueue.length);
-            }
             return creeps[0].id;
         }else{
+            if(override && creeps.length == 0){
+                creeps = room.find(FIND_MY_CREEPS, {filter: x => !x.spawning && x.memory.bodyType == bodyType});
+                if(creeps.length > 0) return creeps[0].id;
+            }
             //Is one being spawned
             for(let spawnId in room.memory.spawning){
                 if(room.memory.spawning[spawnId].bodyType == bodyType){
@@ -153,7 +149,7 @@ export class RoomManager extends Manager{
     queue(action: RoomTask){
         super.queue(action);
     }
-    addPriority(action: RoomTask){
-        super.addPriority(action);
+    push(action: RoomTask){
+        super.push(action);
     }
 }

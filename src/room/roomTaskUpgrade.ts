@@ -7,10 +7,10 @@ import {CreepRoles} from './roomUtils';
 import { CreepTaskFill } from 'creep/creepTaskFill';
 
 export class RoomTaskUpgrade extends RoomTask{
-    constructor(manager: RoomManager, args: RoomTaskArgs, repeating: boolean = false, promiseId?: string, name: string = RoomTaskUpgrade.name){
-        super(manager, args, name, repeating, promiseId);
+    constructor(manager: RoomManager, args: RoomTaskArgs, repeating: boolean = false, priority: boolean = false, promiseId?: string, name: string = RoomTaskUpgrade.name){
+        super(manager, args, name, repeating, priority, promiseId);
     }
-    run(): [boolean, boolean]{
+    run(): boolean{
         let room = <Room>this.manager.actor;
         let manager = <RoomManager>this.manager;
         //Are we maxed out, if not make more
@@ -28,7 +28,7 @@ export class RoomTaskUpgrade extends RoomTask{
                 manager.queueSpawn(new GeneralCreep(manager.maxCreepCost()));
             }
         }
-        return [true, false];
+        return true;
     }
     
 }

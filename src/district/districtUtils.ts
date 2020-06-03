@@ -5,7 +5,6 @@ export function initDistrictMemory(districtMemory: DisctrictMemory) {
         districtMemory.name = Math.random().toString();
     }
     districtMemory.rooms = [];
-    districtMemory.aPriority = [];
-    districtMemory.aPromises = [];
-    districtMemory.aQueue = [];
+    districtMemory.taskPromises = [];
+    districtMemory.taskQueue = [];
 }

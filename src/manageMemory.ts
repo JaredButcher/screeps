@@ -12,7 +12,7 @@ export function initMemory(){
     Memory.promises = {};
     Memory.promiseCount = Math.floor(Math.random() * 100000);
     Memory.districts = {};
-    Memory.president = {aQueue: [], aPromises: [], aPriority: []};
+    Memory.president = {taskQueue: [], taskPromises: []};
     for(let district in Memory.districts){
         initDistrictMemory(Memory.districts[district]);
     }
@@ -22,10 +22,8 @@ export function initMemory(){
     for(let creepName in Game.creeps){
         let creep = <Creep>Game.creeps[creepName];
         creep.memory.inited = true;
-        creep.memory.aPromises = [];
-        creep.memory.aQueue = [];
-        creep.memory.aPromises = [];
-        creep.memory.aPriority = [];
+        creep.memory.taskPromises = [];
+        creep.memory.taskQueue = [];
         if(WORK in creep.body){
             creep.memory.bodyType = CreepTypes.GENERAL;
         }else if(CLAIM in creep.body){
@@ -47,13 +45,7 @@ export function cleanMemory(){
     let creepsToRemove: string[] = [];
     for(let creepId in Memory.creeps){
         if(!Game.getObjectById(creepId)){
-            for(let task of Memory.creeps[creepId].aQueue){
-                if(Memory.promises[task.promiseId].status == PromiseState.RUNNING){
-                    Memory.promises[task.promiseId].status = PromiseState.ERR_DEAD;
-                    Memory.promises[task.promiseId].age = Game.time;
-                }
-            }
-            for(let task of Memory.creeps[creepId].aPriority){
+            for(let task of Memory.creeps[creepId].taskQueue){
                 if(Memory.promises[task.promiseId].status == PromiseState.RUNNING){
                     Memory.promises[task.promiseId].status = PromiseState.ERR_DEAD;
                     Memory.promises[task.promiseId].age = Game.time;

@@ -8,16 +8,16 @@ export interface CreepTaskArgsRepairAuto extends CreepTaskArgs{
 }
 
 export class CreepTaskRepairAuto extends CreepTask{
-    constructor(manager: CreepManager, args: CreepTaskArgsRepairAuto, repeating: boolean = false, promiseId?: string, name: string = CreepTaskRepairAuto.name){
-        super(manager, args, name, repeating, promiseId);
+    constructor(manager: CreepManager, args: CreepTaskArgsRepairAuto, repeating: boolean = false, priority: boolean = false, promiseId?: string, name: string = CreepTaskRepairAuto.name){
+        super(manager, args, name, repeating, priority, promiseId);
     }
-    run(): [boolean, boolean]{
+    run(): boolean{
         let creep = <Creep>this.manager.actor;
         let manager = <CreepManager>this.manager;
         let args = <CreepTaskArgsRepairAuto>this.args;
         if(creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0){
             manager.push(new CreepTaskFill(manager, {resourceType: RESOURCE_ENERGY}));
-            return [false, false];
+            return false;
         }
         if(!args.targetId){
             //find target
@@ -33,9 +33,9 @@ export class CreepTaskRepairAuto extends CreepTask{
                 args.range = 3;
             }else{
                 this.end(PromiseState.SUCESS);
-                return [true, false];
+                return true;
             }    
-        }else if(super.run()[0]){
+        }else if(super.run()){
             //Repair
             let target = <Structure>Game.getObjectById(<Id<Structure>>args.targetId);
             let status: ScreepsReturnCode = creep.repair(target);
@@ -46,6 +46,6 @@ export class CreepTaskRepairAuto extends CreepTask{
                 }
             }
         }
-        return [false, false];
+        return false;
     }
 }

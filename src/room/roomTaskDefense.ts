@@ -1,18 +1,19 @@
 import {RoomTask, RoomManager, RoomTaskArgs} from './roomManager';
 
 export class RoomTaskDefense extends RoomTask{
-    constructor(manager: RoomManager, args: RoomTaskArgs, repeating: boolean = false, promiseId?: string, name: string = RoomTaskDefense.name){
-        super(manager, args, name, repeating, promiseId);
+    constructor(manager: RoomManager, args: RoomTaskArgs, repeating: boolean = false, priority: boolean = false, promiseId?: string, name: string = RoomTaskDefense.name){
+        super(manager, args, name, repeating, priority, promiseId);
     }
-    run(): [boolean, boolean]{
+    run(): boolean{
         let room = <Room>this.manager.actor;
         let manager = <RoomManager>this.manager;
         let hostiles = room.find(FIND_HOSTILE_CREEPS);
-        if(hostiles){
+        if(hostiles.length > 0){
             //Move to priority queue if defcon rises above 0
             if(room.memory.defcon == 0){
                 room.memory.defcon = 1;
-                return [true, true];
+                this.priority = true;
+                return true;
             }
             //Choose target hostile
             let target: [Creep, number] | null = null;
@@ -56,10 +57,11 @@ export class RoomTaskDefense extends RoomTask{
             //If defcon returns to 0, move to normal queue
             if(room.memory.defcon > 0){
                 room.memory.defcon = 0;
-                return [true, true];
+                this.priority = false;
+                return true;
             }    
         }    
-        return [true, false];
+        return true;
     }
     
 }

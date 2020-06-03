@@ -6,11 +6,13 @@ export class Task{
     args: object;
     name: string;
     manager: Manager;
-    constructor(manager: Manager, args: object, name: string, repeating: boolean = false, promiseId?: string){
+    priority: boolean;
+    constructor(manager: Manager, args: object, name: string, repeating: boolean = false, priority: boolean = false, promiseId?: string){
         this.repeating = repeating;
         this.args = args;
         this.manager = manager;
         this.name = name;
+        this.priority = priority;
         if(promiseId === undefined){
             this.promiseId = Memory.promiseCount.toString();
             Memory.promiseCount = (Memory.promiseCount + 1) % 1000000000;
@@ -18,9 +20,9 @@ export class Task{
             this.promiseId = promiseId;
         }
     }
-    run(): [boolean, boolean]{
+    run(): boolean{
         this.end(PromiseState.SUCESS);
-        return [true, false];
+        return true;
     }
     start(){
         Memory.promises[this.promiseId] = {status: PromiseState.RUNNING, age: 0};
@@ -31,7 +33,7 @@ export class Task{
         }
     }
     toJSON(){
-        return {promiseId: this.promiseId, repeating: this.repeating, args: this.args, name: this.name};
+        return {promiseId: this.promiseId, repeating: this.repeating, args: this.args, name: this.name, priority: this.priority};
     }
 }
 
@@ -44,39 +46,19 @@ export class Manager{
     }
     queue(action: Task){
         action.start();
-        this.memory.aQueue.push(action);
+        this.memory.taskQueue.push(action);
     }
     push(action: Task){
         action.start();
-        this.memory.aQueue.unshift(action);
-    }
-    addPriority(action: Task){
-        action.start();
-        this.memory.aPriority.push(action);
-    }
-    removePriority(index: number, status: PromiseState){
-        Memory.promises[this.memory.aPriority[index].promiseId] = {status: status, age: Game.time};
-        this.memory.aPriority.splice(index, 1);
-    }
-    moveToPriority(index: number){
-        this.memory.aPriority.push(this.memory.aQueue[index]);
-        this.memory.aQueue.splice(index, 1);
-    }
-    moveFromPriority(index: number){
-        this.memory.aQueue.push(this.memory.aPriority[index]);
-        this.memory.aPriority.splice(index, 1);
+        this.memory.taskQueue.unshift(action);
     }
     clearQueue(){
-        for(let action of this.memory.aQueue){
+        for(let action of this.memory.taskQueue){
             Memory.promises[action.promiseId] = {status: PromiseState.ERR_PREEMPTED, age: Game.time};
         }
-        this.memory.aQueue = [];
-        for(let action of this.memory.aPriority){
-            Memory.promises[action.promiseId] = {status: PromiseState.ERR_PREEMPTED, age: Game.time};
-        }
-        this.memory.aPriority = [];
+        this.memory.taskQueue = [];
     }
     shift(){
-        this.memory.aQueue.shift();
+        this.memory.taskQueue.shift();
     }
 }

@@ -11,11 +11,10 @@ export interface RoomTaskHarvestSourceArgs extends RoomTaskArgs{
 }
 
 export class RoomTaskHarvestSource extends RoomTask{
-    constructor(manager: RoomManager, args: RoomTaskHarvestSourceArgs, repeating: boolean = false, promiseId?: string, name: string = RoomTaskHarvestSource.name){
-        super(manager, args, name, repeating, promiseId);
+    constructor(manager: RoomManager, args: RoomTaskHarvestSourceArgs, repeating: boolean = false, priority: boolean = false, promiseId?: string, name: string = RoomTaskHarvestSource.name){
+        super(manager, args, name, repeating, priority, promiseId);
     }
-    run(): [boolean, boolean]{
-        console.log("RM SOURCE HARVEST");
+    run(): boolean{
         let args = <RoomTaskHarvestSourceArgs>this.args;
         let room = <Room>this.manager.actor;
         let manager = <RoomManager>this.manager;
@@ -66,7 +65,7 @@ export class RoomTaskHarvestSource extends RoomTask{
             }
         }
         //Find or queue creation of such
-        return [true, false];
+        return true;
     }
     queueGeneralHarvest(creep: Id<Creep>, sourceEntry: ResourceMemory, sourceId: Id<Source>){
         let creeep = <Creep>Game.getObjectById(creep);

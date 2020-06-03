@@ -9,34 +9,34 @@ export interface CreepTaskArgsEmpty extends CreepTaskArgs{
 }
 
 export class CreepTaskEmpty extends CreepTask{
-    constructor(manager: CreepManager, args: CreepTaskArgsEmpty, repeating: boolean = false, promiseId?: string, name: string = CreepTaskEmpty.name){
+    constructor(manager: CreepManager, args: CreepTaskArgsEmpty, repeating: boolean = false, priority: boolean = false, promiseId?: string, name: string = CreepTaskEmpty.name){
         args.range = 1;
-        super(manager, args, name, repeating, promiseId);
+        super(manager, args, name, repeating, priority, promiseId);
     }
-    run(): [boolean, boolean]{
+    run(): boolean{
         let creep = <Creep>this.manager.actor;
         let args = <CreepTaskArgsEmpty>this.args;
         if(creep.store.getUsedCapacity(args.resourceType) == 0){
             this.end(PromiseState.SUCESS);
-            return [true, false];
+            return true;
         }
-        if(super.run()[0]){
+        if(super.run()){
             if(!args.targetId){
                 if(!this.setTarget(creep)){
                     this.end(PromiseState.ERR_INVALID_TARGET);
-                    return [true, false];
+                    return true;
                 }else{
-                    return [false, false];
+                    return false;
                 }
             }else{
                 let target: AnyStoreStructure = <AnyStoreStructure>Game.getObjectById(args.targetId);
                 if(creep.transfer(target, args.resourceType) != OK){
                     args.targetId = undefined;
                 }
-                return [false, false];
+                return false;
             }
         }
-        return [false, false];
+        return false;
     }
     setTarget(creep: Creep): boolean{
         let args = <CreepTaskArgsEmpty>this.args;

@@ -6,10 +6,10 @@ import {CreepTypes} from '../creep/creepUtils';
 import {CreepRoles} from './roomUtils';
 
 export class RoomTaskRepair extends RoomTask{
-    constructor(manager: RoomManager, args: RoomTaskArgs, repeating: boolean = false, promiseId?: string, name: string = RoomTaskRepair.name){
-        super(manager, args, name, repeating, promiseId);
+    constructor(manager: RoomManager, args: RoomTaskArgs, repeating: boolean = false, priority: boolean = false, promiseId?: string, name: string = RoomTaskRepair.name){
+        super(manager, args, name, repeating, priority, promiseId);
     }
-    run(): [boolean, boolean]{
+    run(): boolean{
         let room = <Room>this.manager.actor;
         let manager = <RoomManager>this.manager;
         //Are we maxed out
@@ -35,7 +35,7 @@ export class RoomTaskRepair extends RoomTask{
                 }
             }
         }
-        return [true, false];
+        return true;
     }
     
 }

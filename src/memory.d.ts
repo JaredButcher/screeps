@@ -20,12 +20,12 @@ interface TaskMemory{
     repeating: boolean;
     args: object;
     name: string;
+    priority: boolean;
 }
 
 interface ManagerMemory{
-    aQueue: TaskMemory[];
-    aPromises: string[];
-    aPriority: TaskMemory[];
+    taskQueue: TaskMemory[];
+    taskPromises: string[];
 }
 interface CreepPromiseMemory{
     creep: string;

@@ -7,36 +7,36 @@ export interface CreepTaskArgsRepair extends CreepTaskArgs{
 }
 
 export class CreepTaskRepair extends CreepTask{
-    constructor(manager: CreepManager, args: CreepTaskArgsRepair, repeating: boolean = false, promiseId?: string, name: string = CreepTaskRepair.name){
+    constructor(manager: CreepManager, args: CreepTaskArgsRepair, repeating: boolean = false, priority: boolean = false, promiseId?: string, name: string = CreepTaskRepair.name){
         let target: Structure = <Structure>Game.getObjectById(args.targetId);
         args.x = target.pos.x;
         args.y = target.pos.y;
         args.roomName = target.pos.roomName;
         args.range = 3;
-        super(manager, args, name, repeating, promiseId);
+        super(manager, args, name, repeating, priority, promiseId);
     }
-    run(): [boolean, boolean]{
-        if(super.run()[0]){
+    run(): boolean{
+        if(super.run()){
             let creep = <Creep>this.manager.actor;
             let args = <CreepTaskArgsRepair>this.args;
             let target: Structure = <Structure>Game.getObjectById(args.targetId);
             let status: ScreepsReturnCode = creep.repair(target);
             if(status == ERR_NOT_ENOUGH_RESOURCES){
                 this.end(PromiseState.ERR_LACK_RESOURCE);
-                return [true, false];
+                return true;
             }
             if(status == OK){
                 if(target.hits == target.hitsMax ||
                     (args.untilHits && target.hits >= args.untilHits)){
                     this.end(PromiseState.SUCESS);
-                    return [true, false];
+                    return true;
                 }else{
-                    return [false, false];
+                    return false;
                 }
             }
             this.end(PromiseState.ERR_MISC_ERROR);
-            return [true, false];
+            return true;
         }
-        return [false, false];
+        return false;
     }
 }

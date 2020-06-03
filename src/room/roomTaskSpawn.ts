@@ -1,10 +1,10 @@
 import {RoomTask, RoomManager, RoomTaskArgs} from './roomManager';
 
 export class RoomTaskSpawn extends RoomTask{
-    constructor(manager: RoomManager, args: RoomTaskArgs, repeating: boolean = false, promiseId?: string, name: string = RoomTaskSpawn.name){
-        super(manager, args, name, repeating, promiseId);
+    constructor(manager: RoomManager, args: RoomTaskArgs, repeating: boolean = false, priority: boolean = false, promiseId?: string, name: string = RoomTaskSpawn.name){
+        super(manager, args, name, repeating, priority, promiseId);
     }
-    run(): [boolean, boolean]{
+    run(): boolean{
         let room = <Room>this.manager.actor;
         let spawnQueue = room.memory.spawnQueue;
         //Remove creeps that have finished spawning
@@ -26,9 +26,8 @@ export class RoomTaskSpawn extends RoomTask{
                     spawns[0].spawnCreep(spawnQueue[0].body, name, {memory: {
                         bodyType: spawnQueue[0].bodyType, 
                         inited: true,
-                        aQueue: [],
-                        aPromises: [],
-                        aPriority: []
+                        taskQueue: [],
+                        taskPromises: []
                     }});
                     ++Memory.creepCount;
                     room.memory.spawning[spawns[0].id] = spawnQueue[0];
@@ -36,6 +35,6 @@ export class RoomTaskSpawn extends RoomTask{
                 }
             }
         }
-        return [true, false];
+        return true;
     }
 }

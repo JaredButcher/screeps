@@ -8,23 +8,23 @@ export interface CreepTaskArgs{
 }
 
 export class CreepTask extends Task{
-    constructor(manager: CreepManager, args: CreepTaskArgs, name: string, repeating: boolean = false, promiseId?: string){
-        super(manager, args, name, repeating, promiseId);
+    constructor(manager: CreepManager, args: CreepTaskArgs, name: string, repeating: boolean = false, priority: boolean = false, promiseId?: string){
+        super(manager, args, name, repeating, priority, promiseId);
     }
-    run(): [boolean, boolean]{
+    run(): boolean{
         let args = <CreepTaskArgs>this.args;
         if(args.x && args.y && args.roomName){
             if(args.range === undefined) args.range = 0;
             let creep = <Creep>this.manager.actor;
             if(creep.room.name == args.roomName && Math.abs(creep.pos.x - args.x) <= args.range && 
                 Math.abs(creep.pos.y - args.y) <= args.range){
-                return [true, false]
+                return true;
             }else{
                 creep.moveTo(new RoomPosition(args.x, args.y, args.roomName));
-                return [false, false];
+                return false;
             } 
         }
-        return [true, false];
+        return true;
     }
 }
 
@@ -35,7 +35,7 @@ export class CreepManager extends Manager{
     queue(action: CreepTask){
         super.queue(action);
     }
-    addPriority(action: CreepTask){
-        super.addPriority(action);
+    push(task: CreepTask){
+        super.push(task);
     }
 }
